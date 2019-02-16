@@ -1,0 +1,74 @@
+@import url("/home/brian/.cache/wal/colors-custom-gtk3.css");
+
+* {
+    border: none;
+    border-radius: 0;
+    color: @foreground;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    min-height: 0;
+}
+
+window#waybar {
+    background: @backgroundAlpha;
+    border-bottom: 3px solid @color0Alpha;
+}
+
+#workspaces button {
+    padding: 0 5px;
+    background: transparent;
+    border-bottom: 3px solid transparent;
+}
+
+/* Removes Strange Hover effect */
+#workspaces button:hover {
+    box-shadow: inherit;
+    text-shadow: inherit;
+}
+
+#workspaces button.focused,
+#mode
+{
+    background: @color2Alpha;
+    border-bottom: 3px solid @foreground;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#network,
+#mode,
+#custom-spotify,
+#custom-nordvpn
+{
+    padding: 0 10px;
+    margin: 0 5px;
+    border-bottom: 3px solid @color0Alpha;
+}
+
+#custom-nordvpn {
+    background-color: #26A65B;
+}
+
+#battery.charging {
+    background-color: #26A65B;
+}
+
+@keyframes blink {
+    to {
+        background-color: red;
+    }
+}
+
+#battery.warning:not(.charging) {
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#network.disconnected {
+    background: red;
+}

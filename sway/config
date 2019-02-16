@@ -1,0 +1,262 @@
+### Pywal
+include "$HOME/.cache/wal/colors-sway"
+
+### Figure out bindsym for key
+# xev to get keycode (sometimes it will say the key name)
+# xmodmap -pke | grep <keycode>
+
+### Variables
+#
+# Logo key. Use Mod1 for Alt.
+set $mod Mod4
+
+set $left j
+set $down k
+set $up l
+set $right semicolon
+
+set $term termite
+set $menu rofi -show drun | xargs swaymsg exec
+# set $menu dmenu_path | dmenu | xargs swaymsg exec
+
+gaps inner 20
+gaps outer 10
+
+### Output configuration
+# You can get the names of your outputs by running: swaymsg -t get_outputs
+output eDP-1 scale 1.33333333333333333
+### Triple Monitor Setup
+# output DP-3 resolution 1920x1080 scale .75 position 0,0
+# output eDP-1 resolution 2560x1440 scale 1.33333333333333333 position 2560,0
+# output DP-4 resolution 1920x1080 scale .75 position 4480,0
+
+# $wallpaper comes from the pywal import
+output * bg $wallpaper fill
+
+### Idle configuration
+# This will lock your screen after 300 seconds of inactivity, then turn off
+# your displays after another 300 seconds, and turn your screens back on when
+# resumed. It will also lock your screen before your computer goes to sleep.
+# exec swayidle \
+#     timeout 300 'swaylock -c 000000' \
+#     timeout 600 'swaymsg "output * dpms off"' \
+#        resume 'swaymsg "output * dpms on"' \
+#     before-sleep 'swaylock -c 000000'
+
+
+### Font Configuration
+# Font for window titles
+font pango:Source Code Pro Medium 10
+
+
+### Input configuration
+# You can get the names of your inputs by running: swaymsg -t get_inputs
+input "2:14:ETPS/2_Elantech_Touchpad" {
+	dwt enabled
+	tap enabled
+	natural_scroll enabled
+	middle_emulation enabled
+}
+
+### Key bindings
+#
+# Basics:
+#
+    # start a terminal
+    bindsym $mod+Return exec $term
+
+    # kill focused window
+    bindsym $mod+Shift+q kill
+
+    # start your launcher
+    bindsym $mod+d exec $menu
+
+    # lock screen
+    bindsym Mod1+l exec swaylock -c 000000
+
+    ### Screenshots
+    # Screenshot All
+    bindsym Print+a exec grim ~/Pictures/$(date +'%Y-%m-%d-%H%M%S').png
+    # Screenshot Selected Area
+    bindsym Print+s exec grim -g "$(slurp)" ~/Pictures/$(date +'%Y-%m-%d-%H%M%S')-selected.png
+    # Screenshot Currently Focused Monitor
+    bindsym Print+c exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') ~/Pictures/$(date +'%Y-%m-%d-%H%M%S')-focused.png
+
+    # Drag floating windows by holding down $mod and left mouse button.
+    # Resize them with right mouse button + $mod.
+    # Despite the name, also works for non-floating windows.
+    # Change normal to inverse to use left mouse button for resizing and right
+    # mouse button for dragging.
+    floating_modifier $mod normal
+
+    # reload the configuration file and restart waybar
+    bindsym $mod+Shift+c reload; exec "pkill waybar; waybar &!"
+
+    # exit sway (logs you out of your Wayland session)
+    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+#
+# Moving around:
+#
+    # Move your focus around
+    bindsym $mod+$left focus left
+    bindsym $mod+$down focus down
+    bindsym $mod+$up focus up
+    bindsym $mod+$right focus right
+    # or use $mod+[up|down|left|right]
+    bindsym $mod+Left focus left
+    bindsym $mod+Down focus down
+    bindsym $mod+Up focus up
+    bindsym $mod+Right focus right
+
+    # _move_ the focused window with the same, but add Shift
+    bindsym $mod+Shift+$left move left
+    bindsym $mod+Shift+$down move down
+    bindsym $mod+Shift+$up move up
+    bindsym $mod+Shift+$right move right
+    # ditto, with arrow keys
+    bindsym $mod+Shift+Left move left
+    bindsym $mod+Shift+Down move down
+    bindsym $mod+Shift+Up move up
+    bindsym $mod+Shift+Right move right
+#
+# Audio
+#
+    # Just Alsa Mixer
+    # bindsym XF86AudioRaiseVolume exec amixer -q set Master 2dB+ unmute
+    # bindsym XF86AudioLowerVolume exec amixer -q set Master 2dB- unmute
+    # bindsym XF86AudioMute exec amixer -q set Master toggle
+
+    # Pulse Audio
+    bindsym XF86AudioRaiseVolume exec pulseaudio-ctl up
+    bindsym XF86AudioLowerVolume exec pulseaudio-ctl down
+    bindsym XF86AudioMute exec pulseaudio-ctl mute
+    bindsym XF86AudioMicMute exec pulseaudio-ctl mute-input
+
+    # Players
+    # play-pause on both media buttons, as this laptop doesnt have them
+    # This is for bluetooth headsets which are bad at tracking whether or not song is playing
+    bindsym XF86AudioPlay exec playerctl play-pause
+    bindsym XF86AudioPause exec playerctl play-pause
+
+#
+# Screen Brightness
+#
+    bindsym XF86MonBrightnessUp exec light -A 5
+    bindsym XF86MonBrightnessDown exec light -U 5
+
+#
+# Keyboard Backlighting
+#
+    bindsym XF86WakeUp+space exec ./custom-scripts/keyboard_backlight.py
+
+#
+# Workspaces:
+#
+    # switch to workspace
+    bindsym $mod+1 workspace 1
+    bindsym $mod+2 workspace 2
+    bindsym $mod+3 workspace 3
+    bindsym $mod+4 workspace 4
+    bindsym $mod+5 workspace 5
+    bindsym $mod+6 workspace 6
+    bindsym $mod+7 workspace 7
+    bindsym $mod+8 workspace 8
+    bindsym $mod+9 workspace 9
+    bindsym $mod+0 workspace 10
+    # move focused container to workspace
+    bindsym $mod+Shift+1 move container to workspace 1
+    bindsym $mod+Shift+2 move container to workspace 2
+    bindsym $mod+Shift+3 move container to workspace 3
+    bindsym $mod+Shift+4 move container to workspace 4
+    bindsym $mod+Shift+5 move container to workspace 5
+    bindsym $mod+Shift+6 move container to workspace 6
+    bindsym $mod+Shift+7 move container to workspace 7
+    bindsym $mod+Shift+8 move container to workspace 8
+    bindsym $mod+Shift+9 move container to workspace 9
+    bindsym $mod+Shift+0 move container to workspace 10
+    # move focused container to workspace and switch to workspace
+    bindsym $mod+Control+1 move container to workspace 1; workspace 1
+    bindsym $mod+Control+2 move container to workspace 2; workspace 2
+    bindsym $mod+Control+3 move container to workspace 3; workspace 3
+    bindsym $mod+Control+4 move container to workspace 4; workspace 4
+    bindsym $mod+Control+5 move container to workspace 5; workspace 5
+    bindsym $mod+Control+6 move container to workspace 6; workspace 6
+    bindsym $mod+Control+7 move container to workspace 7; workspace 7
+    bindsym $mod+Control+8 move container to workspace 8; workspace 8
+    bindsym $mod+Control+9 move container to workspace 9; workspace 9
+    bindsym $mod+Control+0 move container to workspace 10; workspace 10
+
+    # Note: workspaces can have any name you want, not just numbers.
+    # We just use 1-10 as the default.
+#
+# Layout stuff:
+#
+    # You can "split" the current object of your focus with
+    # $mod+b or $mod+v, for horizontal and vertical splits
+    # respectively.
+    bindsym $mod+b splith
+    bindsym $mod+v splitv
+
+    # Switch the current container between different layout styles
+    bindsym $mod+s layout stacking
+    bindsym $mod+w layout tabbed
+    bindsym $mod+e layout toggle split
+
+    # Make the current focus fullscreen
+    bindsym $mod+f fullscreen
+
+    # Toggle the current focus between tiling and floating mode
+    bindsym $mod+Shift+space floating toggle
+
+    # Swap focus between the tiling area and the floating area
+    bindsym $mod+space focus mode_toggle
+
+    # move focus to the parent container
+    bindsym $mod+a focus parent
+
+#
+# Pywal Coloring
+#
+# class                 border          background      text         indicator         child_border
+client.focused          $color2         $color2         $foreground  $color2           $color2
+client.focused_inactive $background     $background     $foreground  $background       $background
+client.unfocused        $background     $background     $foreground  $background       $background
+client.urgent           $color2         $color2         $foreground  $color2           $color2
+client.placeholder      $color2         $color2         $foreground  $color2           $color2
+
+client.background       $color2
+
+#
+# Resizing containers:
+#
+mode "resize" {
+    # left will shrink the containers width
+    # right will grow the containers width
+    # up will shrink the containers height
+    # down will grow the containers height
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
+
+    # ditto, with arrow keys
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+
+    # return to default mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+#
+# Start Waybar
+#
+bar {
+    swaybar_command waybar
+}
+
+
+# exec waybar

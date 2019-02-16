@@ -1,0 +1,88 @@
+{
+    "layer": "top", // Waybar at top layer
+    // "position": "bottom", // Waybar at the bottom of your screen
+    // "height": 30, // Waybar height
+    // "width": 1280, // Waybar width
+
+    // Choose the order of the modules
+    "modules-left": ["sway/workspaces", "sway/mode", "custom/nordvpn", "custom/spotify"],
+    "modules-center": ["sway/window"],
+    "modules-right": ["network", "pulseaudio", "cpu", "memory", "battery", "clock#calendar", "clock"],
+
+    // Modules configuration
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "format": "{name}: {icon}",
+        "format-icons": {
+            "1": "",
+            "2": "",
+            "3": "",
+            "urgent": "",
+            "focused": "",
+            "default": ""
+        }
+    },
+    "sway/mode": {
+        "format": "<span style=\"italic\">{}</span>"
+    },
+    "sway/window": {
+        "max-length": 60
+    },
+    "clock#calendar": {
+        "format": "{:%D}",
+        "format-alt": "{:%A, %B %d, %Y}"
+    },
+    "clock": {
+        "format": "{:%H:%M}",
+        "format-alt": "{:%I:%M %p}"
+    },
+    "cpu": {
+        "format": "{usage:2}% "
+    },
+    "memory": {
+        "format": "{}% "
+    },
+    "battery": {
+        "bat": "BAT0",
+        "states": {
+            "warning": 15
+        },
+        "format": "{capacity}% {icon}",
+        // "format-full": "",
+        "format-icons": ["", "", "", "", ""]
+    },
+    "network": {
+        "format-wifi": "{essid} ({signalStrength}%) ",
+        "format-ethernet": "{ifname}: {ipaddr}/{cidr} ",
+        "format-disconnected": "Disconnected "
+    },
+    "pulseaudio": {
+        "format": "{volume}% {icon}",
+        "format-bluetooth": "{volume}% {icon}",
+        "format-muted": "",
+        "format-icons": {
+            "headphones": "",
+            "handsfree": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "default": ["", ""]
+        },
+        "on-click": "termite --exec pulsemixer"
+    },
+    "custom/spotify": {
+        "format": " {}",
+        "max-length": 40,
+        "exec": "$HOME/.config/waybar/custom-modules/spotify.py 2> /dev/null",
+        "exec-if": "pgrep spotify",
+        "on-click": "playerctl -p spotify play-pause"
+    },
+    "custom/nordvpn": {
+        "format": " {}",
+        "max-length": 30,
+        "interval": 4,
+        "exec": "$HOME/.config/waybar/custom-modules/nordvpn.py 2> /dev/null",
+        "exec-if": "pgrep openvpn"
+    }
+}
