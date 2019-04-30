@@ -16,7 +16,9 @@ set $up l
 set $right semicolon
 
 set $term termite
-set $menu rofi -show drun | xargs swaymsg exec
+
+set $menu rofi -show drun | xargs swaymsg
+# set $menu rofi -show drun | xargs swaymsg exec
 # set $menu dmenu_path | dmenu | xargs swaymsg exec
 
 gaps inner 20
@@ -90,7 +92,8 @@ input "2:14:ETPS/2_Elantech_Touchpad" {
     floating_modifier $mod normal
 
     # reload the configuration file and restart waybar
-    bindsym $mod+Shift+c reload; exec "pkill waybar; waybar &!"
+    # bindsym $mod+Shift+c reload; exec "pkill waybar; waybar &!"
+    bindsym $mod+Shift+c reload
 
     # exit sway (logs you out of your Wayland session)
     bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
@@ -254,9 +257,8 @@ bindsym $mod+r mode "resize"
 #
 # Start Waybar
 #
+# exec waybar
+
 bar {
     swaybar_command waybar
 }
-
-
-# exec waybar

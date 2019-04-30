@@ -1,26 +1,26 @@
 {
     "layer": "top", // Waybar at top layer
-    // "position": "bottom", // Waybar at the bottom of your screen
-    // "height": 30, // Waybar height
-    // "width": 1280, // Waybar width
-
     // Choose the order of the modules
     "modules-left": ["sway/workspaces", "sway/mode", "custom/nordvpn", "custom/spotify"],
     "modules-center": ["sway/window"],
     "modules-right": ["network", "pulseaudio", "cpu", "memory", "battery", "clock#calendar", "clock"],
 
-    // Modules configuration
+    // Modules
     "sway/workspaces": {
         "disable-scroll": true,
         "all-outputs": true,
         "format": "{name}: {icon}",
         "format-icons": {
-            "1": "",
-            "2": "",
-            "3": "",
-            "urgent": "",
-            "focused": "",
-            "default": ""
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": "",
+            "5": "",
+            "9": "",
+            "10": "䀘",
+            "urgent": "",
+            "focused": "",
+            "default": ""
         }
     },
     "sway/mode": {
@@ -38,10 +38,10 @@
         "format-alt": "{:%I:%M %p}"
     },
     "cpu": {
-        "format": "{usage:2}% "
+        "format": "{usage:2}% "
     },
     "memory": {
-        "format": "{}% "
+        "format": "{}% "
     },
     "battery": {
         "bat": "BAT0",
@@ -49,37 +49,36 @@
             "warning": 15
         },
         "format": "{capacity}% {icon}",
-        // "format-full": "",
-        "format-icons": ["", "", "", "", ""]
+        "format-icons": ["", "", "", "", "", "", "", "", "", ""]
     },
     "network": {
-        "format-wifi": "{essid} ({signalStrength}%) ",
-        "format-ethernet": "{ifname}: {ipaddr}/{cidr} ",
-        "format-disconnected": "Disconnected "
+        "format-wifi": "{essid} ({signalStrength}%) 蠟",
+        "format-ethernet": "{ifname}: {ipaddr}/{cidr} ",
+        "format-disconnected": "Disconnected 來"
     },
     "pulseaudio": {
         "format": "{volume}% {icon}",
-        "format-bluetooth": "{volume}% {icon}",
-        "format-muted": "",
+        "format-bluetooth": "{volume}% {icon}",
+        "format-muted": "",
         "format-icons": {
-            "headphones": "",
-            "handsfree": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "default": ["", ""]
+            "headphones": "",
+            "handsfree": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "default": ["", "", ""]
         },
         "on-click": "termite --exec pulsemixer"
     },
     "custom/spotify": {
-        "format": " {}",
+	"format": "<span font='ttf-material-design-icons-webfont'></span> {}",
         "max-length": 40,
         "exec": "$HOME/.config/waybar/custom-modules/spotify.py 2> /dev/null",
         "exec-if": "pgrep spotify",
         "on-click": "playerctl -p spotify play-pause"
     },
     "custom/nordvpn": {
-        "format": " {}",
+        "format": "<span font='ttf-material-design-icons-webfont'>ﶲ</span> <span>{}</span>",
         "max-length": 30,
         "interval": 4,
         "exec": "$HOME/.config/waybar/custom-modules/nordvpn.py 2> /dev/null",

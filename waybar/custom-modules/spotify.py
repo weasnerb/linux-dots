@@ -30,7 +30,7 @@ def on_metadata(player, metadata, manager):
     if player.props.status == 'Playing':
         sys.stdout.write(track_info + '\n')
     else:
-        sys.stdout.write(' ' + track_info + '\n')
+        sys.stdout.write('<span font="ttf-material-design-icons-webfont"></span> ' + track_info + '\n')
     sys.stdout.flush()
 
 
