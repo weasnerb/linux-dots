@@ -15,7 +15,7 @@ set $down j
 set $up k
 set $right l
 
-set $term termite
+set $term alacritty
 
 set $menu rofi -show drun | xargs swaymsg
 # set $menu rofi -show drun | xargs swaymsg exec
@@ -26,7 +26,8 @@ gaps outer 10
 
 ### Output configuration
 # You can get the names of your outputs by running: swaymsg -t get_outputs
-output eDP-1 scale 1.33333333333333333
+#output eDP-1 scale 1.33333333333333333
+output eDP-1 scale 1.25
 ### Triple Monitor Setup
 # output DP-3 resolution 1920x1080 scale .75 position 0,0
 # output eDP-1 resolution 2560x1440 scale 1.33333333333333333 position 2560,0
@@ -74,7 +75,7 @@ input "2:14:ETPS/2_Elantech_Touchpad" {
     bindsym $mod+d exec $menu
 
     # lock screen
-    bindsym Mod1+l exec swaylock -c 000000
+    bindsym Mod1+l exec swaylock --screenshots --indicator --clock --effect-blur 5x2 --fade-in 0.25
 
     ### Screenshots
     # Screenshot All
@@ -125,15 +126,15 @@ input "2:14:ETPS/2_Elantech_Touchpad" {
 # Audio
 #
     # Just Alsa Mixer
-    # bindsym XF86AudioRaiseVolume exec amixer -q set Master 2dB+ unmute
-    # bindsym XF86AudioLowerVolume exec amixer -q set Master 2dB- unmute
-    # bindsym XF86AudioMute exec amixer -q set Master toggle
+    bindsym XF86AudioRaiseVolume exec amixer -q set Master 2%+ unmute
+    bindsym XF86AudioLowerVolume exec amixer -q set Master 2%- unmute
+    bindsym XF86AudioMute exec amixer -q set Master toggle
 
     # Pulse Audio
-    bindsym XF86AudioRaiseVolume exec pulseaudio-ctl up
-    bindsym XF86AudioLowerVolume exec pulseaudio-ctl down
-    bindsym XF86AudioMute exec pulseaudio-ctl mute
-    bindsym XF86AudioMicMute exec pulseaudio-ctl mute-input
+    #bindsym XF86AudioRaiseVolume exec pulseaudio-ctl up
+    #bindsym XF86AudioLowerVolume exec pulseaudio-ctl down
+    #bindsym XF86AudioMute exec pulseaudio-ctl mute
+    #bindsym XF86AudioMicMute exec pulseaudio-ctl mute-input
 
     # Players
     # play-pause on both media buttons, as this laptop doesnt have them

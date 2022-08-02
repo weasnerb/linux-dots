@@ -1,26 +1,41 @@
 {
     "layer": "top", // Waybar at top layer
     // Choose the order of the modules
-    "modules-left": ["sway/workspaces", "sway/mode", "custom/nordvpn", "custom/spotify"],
-    "modules-center": ["sway/window"],
-    "modules-right": ["network", "pulseaudio", "cpu", "memory", "battery", "clock#calendar", "clock"],
-
+    "modules-left": [
+        "sway/workspaces",
+        "sway/mode",
+        "custom/nordvpn",
+        "custom/spotify"
+    ],
+    "modules-center": [
+        "sway/window"
+    ],
+    "modules-right": [
+        "network",
+        "pulseaudio",
+        "bluetooth",
+        "cpu",
+        "memory",
+        "battery",
+        "clock#calendar",
+        "clock"
+    ],
     // Modules
     "sway/workspaces": {
         "disable-scroll": true,
         "all-outputs": true,
         "format": "{name}: {icon}",
         "format-icons": {
-            "1": "",
-            "2": "",
-            "3": "",
-            "4": "",
-            "5": "",
-            "9": "",
-            "10": "䀘",
-            "urgent": "",
-            "focused": "",
-            "default": ""
+            "1": "󰣇",
+            "2": "󰅴",
+            "3": "󱂛",
+            "4": "󰘦",
+            "5": "󰆼",
+            "9": "󰍪",
+            "10": "󰫔",
+            "urgent": "󰗖",
+            "focused": "󰐾",
+            "default": "󰐽"
         }
     },
     "sway/mode": {
@@ -30,18 +45,18 @@
         "max-length": 60
     },
     "clock#calendar": {
-        "format": "{:%D}",
-        "format-alt": "{:%A, %B %d, %Y}"
+        "format": "󰸗 {:%D}",
+        "format-alt": "󰸗 {:%A, %B %d, %Y}"
     },
     "clock": {
-        "format": "{:%H:%M}",
-        "format-alt": "{:%I:%M %p}"
+        "format": "󰅐 {:%H:%M}",
+        "format-alt": "󰅐 {:%I:%M %p}"
     },
     "cpu": {
-        "format": "{usage:2}% "
+        "format": "{usage:2}% 󰍛"
     },
     "memory": {
-        "format": "{}% "
+        "format": "{}% 󰍜"
     },
     "battery": {
         "bat": "BAT0",
@@ -49,36 +64,69 @@
             "warning": 15
         },
         "format": "{capacity}% {icon}",
-        "format-icons": ["", "", "", "", "", "", "", "", "", ""]
+        "format-charging": "{capacity}% {icon}󱐌",
+        "format-icons": [
+            "󰁺",
+            "󰁻",
+            "󰁼",
+            "󰁽",
+            "󰁾",
+            "󰁿",
+            "󰂀",
+            "󰂁",
+            "󰂂",
+            "󰁹"
+        ]
     },
     "network": {
-        "format-wifi": "{essid} ({signalStrength}%) 蠟",
-        "format-ethernet": "{ifname}: {ipaddr}/{cidr} ",
-        "format-disconnected": "Disconnected 來"
+        "format-wifi": "{essid} {icon}",
+        "tooltip-format-wifi": "{essid}: {ipaddr}/{cidr} ({signalStrength}%) {icon}",
+        "format-ethernet": "{ipaddr}/{cidr} 󰈁",
+        "tooltip-format-ethernet": "{ifname}: {ipaddr}/{cidr} 󰈁",
+        "format-disconnected": "Disconnected 󰤮",
+        "format-icons": [
+            "󰤟",
+            "󰤢",
+            "󰤥",
+            "󰤨"
+        ]
     },
     "pulseaudio": {
         "format": "{volume}% {icon}",
-        "format-bluetooth": "{volume}% {icon}",
-        "format-muted": "",
+        "format-bluetooth": "{volume}% {icon}󰂰",
+        "format-muted": "󰝟",
         "format-icons": {
-            "headphones": "",
-            "handsfree": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "default": ["", "", ""]
+            "headphones": "󰋋",
+            "handsfree": "󰋎",
+            "headset": "󰋎",
+            "phone": "󰄜",
+            "portable": "󰓶",
+            "default": [
+                "󰕿",
+                "󰖀",
+                "󰕾"
+            ]
         },
         "on-click": "termite --exec pulsemixer"
     },
+    "bluetooth": {
+        "format": "{status} 󰂯",
+        "format-connected": "{device_alias} 󰂱",
+        "format-connected-battery": "{device_alias} {device_battery_percentage}% 󰥉",
+        "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+        "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%"
+    },
     "custom/spotify": {
-	"format": "<span font='ttf-material-design-icons-webfont'></span> {}",
+        "format": "󰓇 {}",
         "max-length": 40,
         "exec": "$HOME/.config/waybar/custom-modules/spotify.py 2> /dev/null",
         "exec-if": "pgrep spotify",
         "on-click": "playerctl -p spotify play-pause"
     },
     "custom/nordvpn": {
-        "format": "<span font='ttf-material-design-icons-webfont'>ﶲ</span> <span>{}</span>",
+        "format": "󰷖 {}",
         "max-length": 30,
         "interval": 4,
         "exec": "$HOME/.config/waybar/custom-modules/nordvpn.py 2> /dev/null",
