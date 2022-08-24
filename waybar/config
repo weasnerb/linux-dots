@@ -13,10 +13,8 @@
     "modules-right": [
         "network",
         "pulseaudio",
-        "bluetooth",
         "cpu",
         "memory",
-        "battery",
         "clock#calendar",
         "clock"
     ],
@@ -107,7 +105,7 @@
                 "󰕾"
             ]
         },
-        "on-click": "termite --exec pulsemixer"
+        "on-click": "alacritty -e pulsemixer"
     },
     "bluetooth": {
         "format": "{status} 󰂯",
