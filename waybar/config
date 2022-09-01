@@ -107,7 +107,7 @@
                 "󰕾"
             ]
         },
-        "on-click": "termite --exec pulsemixer"
+        "on-click": "alacritty -e pulsemixer"
     },
     "bluetooth": {
         "format": "{status} 󰂯",

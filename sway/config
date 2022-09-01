@@ -263,3 +263,13 @@ bindsym $mod+r mode "resize"
 bar {
     swaybar_command waybar
 }
+
+#
+# Sway Polkit Services
+#
+include /etc/sway/config.d/*
+
+#
+# Policy Kit
+# 
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
