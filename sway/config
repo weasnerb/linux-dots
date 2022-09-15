@@ -1,4 +1,6 @@
-### Pywal
+#
+# Pywal
+#
 include "$HOME/.cache/wal/colors-sway"
 
 ### Figure out bindsym for key
@@ -19,8 +21,6 @@ set $right l
 set $term alacritty
 
 set $menu rofi -show drun | xargs swaymsg
-# set $menu rofi -show drun | xargs swaymsg exec
-# set $menu dmenu_path | dmenu | xargs swaymsg exec
 
 set $monitorLeft DP-2
 set $monitorCenter DP-1
@@ -129,20 +129,15 @@ font pango:Source Code Pro Medium 10
 #
 # Audio
 #
-    # Just Alsa Mixer
-    #bindsym XF86AudioRaiseVolume exec amixer -q set Master 2%+ unmute
-    #bindsym XF86AudioLowerVolume exec amixer -q set Master 2%- unmute
-    #bindsym XF86AudioMute exec amixer -q set Master toggle
 
-    # Pulse Audio
-    bindsym XF86AudioRaiseVolume exec pulsemixer --change-volume +5 --max-volume 100 --id ${pulsemixer --list-sinks | grep Default | grep -Po "\d+" | head -1}
-    bindsym XF86AudioLowerVolume exec pulsemixer --change-volume -5 --max-volume 100 --id ${pulsemixer --list-sinks | grep Default | grep -Po "\d+" | head -1}
-    bindsym XF86AudioMute exec pulsemixer --toggle-mute --id ${pulsemixer --list-sinks | grep Default | grep -Po "\d+" | head -1}
+    bindsym --locked XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+    bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+    bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
 
     # Microphone
-    bindsym XF86AudioMicMute exec pulsemixer --toggle-mute --id ${pulsemixer --list-sources | grep Default | grep -Po "\d+" | head -1}
+    bindsym --locked XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
     # Logitech mouse macro to trigger mic mute on windows should also mute default mic
-    bindsym $alt+Control+Shift+m exec pulsemixer --toggle-mute --id ${pulsemixer --list-sources | grep Default | grep -Po "\d+" | head -1}
+    bindsym $alt+Control+Shift+m exec pactl set-source-mute @DEFAULT_SOURCE@ toggle 
 
     # Players
     # play-pause on both media buttons, as this laptop doesnt have them
@@ -344,9 +339,10 @@ font pango:Source Code Pro Medium 10
 #
 # Application Specific workspaces
 #
-assign [class="Discord"] workspace $wsr9
-assign [class="Spotify"] workspace $wsr10
-
+assign [class="discord"] workspace "$wsr9"
+# Spotify acts weird with assign.
+# @see https://github.com/swaywm/sway/issues/3793
+for_window [class="Spotify"] move window to workspace "$wsr10"
 
 #
 # Layout stuff:
@@ -429,6 +425,18 @@ include /etc/sway/config.d/*
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 
 #
+# Import GTK Theme Settings
+#
+exec_always $HOME/.config/sway/custom-scripts/import-gsettings.sh
+
+#
 # Thunar Daemon
 #
 exec thunar --daemon
+
+#
+# Automount Samaba Drives
+#
+exec $HOME/.config/sway/custom-scripts/samba-user.sh
+exec $HOME/.config/sway/custom-scripts/samba-public.sh
+
