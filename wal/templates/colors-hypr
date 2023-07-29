@@ -1,57 +1,56 @@
 $wallpaper = {wallpaper}
 
+$background = rgb({background.strip})
+$backgroundAlpha = rgba({background.strip}D0)
 
-$background = rgb({background.rgb});
-$backgroundAlpha rgba({background.rgb},0.5);
-
-$foreground = rgb({foreground.rgb});
-$foregroundAlpha rgba({foreground.rgb},0.5);
+$foreground = rgb({foreground.strip})
+$foregroundAlpha = rgba({foreground.strip}D0)
 
 
-$color0 = rgb({color0.rgb});
-$color0Alpha rgba({color0.rgb},0.5);
+$color0 = rgb({color0.strip})
+$color0Alpha = rgba({color0.strip}D0)
 
-$color1 = rgb({color1.rgb});
-$color1Alpha rgba({color1.rgb},0.5);
+$color1 = rgb({color1.strip})
+$colorD0lpha = rgba({color1.strip}D0)
 
-$color2 = rgb({color2.rgb});
-$color2Alpha rgba({color2.rgb},0.5);
+$color2 = rgb({color2.strip})
+$color2Alpha = rgba({color2.strip}D0)
 
-$color3 = rgb({color3.rgb});
-$color3Alpha rgba({color3.rgb},0.5);
+$color3 = rgb({color3.strip})
+$color3Alpha = rgba({color3.strip}D0)
 
-$color4 = rgb({color4.rgb});
-$color4Alpha rgba({color4.rgb},0.5);
+$color4 = rgb({color4.strip})
+$color4Alpha = rgba({color4.strip}D0)
 
-$color5 = rgb({color5.rgb});
-$color5Alpha rgba({color5.rgb},0.5);
+$color5 = rgb({color5.strip})
+$color5Alpha = rgba({color5.strip}D0)
 
-$color6 = rgb({color6.rgb});
-$color6Alpha rgba({color6.rgb},0.5);
+$color6 = rgb({color6.strip})
+$color6Alpha = rgba({color6.strip}D0)
 
-$color7 = rgb({color7.rgb});
-$color7Alpha rgba({color7.rgb},0.5);
+$color7 = rgb({color7.strip})
+$color7Alpha = rgba({color7.strip}D0)
 
-$color8 = rgb({color8.rgb});
-$color8Alpha rgba({color8.rgb},0.5);
+$color8 = rgb({color8.strip})
+$color8Alpha = rgba({color8.strip}D0)
 
-$color9 = rgb({color9.rgb});
-$color9Alpha rgba({color9.rgb},0.5);
+$color9 = rgb({color9.strip})
+$color9Alpha = rgba({color9.strip}D0)
 
-$color10 = rgb({color10.rgb});
-$color10Alpha rgba({color10.rgb},0.5);
+$color10 = rgb({color10.strip})
+$color10Alpha = rgba({color10.strip}D0)
 
-$color11 = rgb({color11.rgb});
-$color11Alpha rgba({color11.rgb},0.5);
+$color11 = rgb({color11.strip})
+$color1D0lpha = rgba({color11.strip}D0)
 
-$color12 = rgb({color12.rgb});
-$color12Alpha rgba({color12.rgb},0.5);
+$color12 = rgb({color12.strip})
+$color12Alpha = rgba({color12.strip}D0)
 
-$color13 = rgb({color13.rgb});
-$color13Alpha rgba({color13.rgb},0.5);
+$color13 = rgb({color13.strip})
+$color13Alpha = rgba({color13.strip}D0)
 
-$color14 = rgb({color14.rgb});
-$color14Alpha rgba({color14.rgb},0.5);
+$color14 = rgb({color14.strip})
+$color14Alpha = rgba({color14.strip}D0)
 
-$color15 = rgb({color15.rgb});
-$color15Alpha rgba({color15.rgb},0.5);
+$color15 = rgb({color15.strip})
+$color15Alpha = rgba({color15.strip}D0)
