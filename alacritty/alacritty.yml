@@ -4,15 +4,15 @@ window:
 
 font:
   normal:
-    family: Source Code Pro
+    family: MesloLGS NF
     style: Regular
   bold:
-    family: Source Code Pro
+    family: MesloLGS NF
     style: Bold
   italic:
-    family: Source Code Pro
+    family: MesloLGS NF
     style: Italic
   bold_italic:
-    family: Source Code Pro
+    family: MesloLGS NF
     style: Bold Italic
   size: 12

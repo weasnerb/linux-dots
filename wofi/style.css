@@ -1,0 +1,49 @@
+@theme "~/.cache/wal/colors-rofi-1.7-dark.rasi"
+* {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  spacing: 0;
+}
+
+window {
+  width: 30%;
+  border-radius: 10;
+}
+
+element {
+  padding: 8 12;
+  border-radius: 5;
+}
+
+element-text {
+  vertical-align: 0.5;
+}
+
+element-icon {
+  size: 30;
+  padding: 0 12 0 0;
+}
+
+entry {
+  padding: 12;
+}
+
+inputbar {
+  children: [prompt, entry];
+}
+
+listview {
+  padding: 8 12;
+  columns: 1;
+  lines: 8;
+}
+
+mainbox {
+  children: [inputbar, listview];
+}
+
+prompt {
+  enabled: true;
+  padding: 12 0 0 12;
+}

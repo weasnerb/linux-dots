@@ -2,13 +2,13 @@
     "layer": "top", // Waybar at top layer
     // Choose the order of the modules
     "modules-left": [
-        "sway/workspaces",
-        "sway/mode",
+        "wlr/workspaces",
+        "wlr/mode",
         "custom/nordvpn",
         "custom/spotify"
     ],
     "modules-center": [
-        "sway/window"
+        "wlr/window"
     ],
     "modules-right": [
         "network",
@@ -21,7 +21,7 @@
         "clock"
     ],
     // Modules
-    "sway/workspaces": {
+    "wlr/workspaces": {
         "disable-scroll": true,
         "all-outputs": true,
         "format": "{name}: {icon}",
@@ -38,10 +38,10 @@
             "default": "󰐽"
         }
     },
-    "sway/mode": {
+    "wlr/mode": {
         "format": "<span style=\"italic\">{}</span>"
     },
-    "sway/window": {
+    "wlr/window": {
         "max-length": 60
     },
     "clock#calendar": {

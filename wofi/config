@@ -1,0 +1,25 @@
+modi = "drun,power:rofi-power-menu --choices=shutdown/reboot/suspend/hibernate,window,calc,emoji";
+font = "Source Code Pro 10";
+show-icons = true;
+terminal = "alacritty";
+drun-display-format = "{name}";
+matching = "fuzzy";
+m = "2"; /* Display on Monitor 2 (middle monitor according to rofi -h) */
+
+/*	ssh-client = "ssh";*/
+/*	ssh-command = "{terminal} -e {ssh-client} {host} [-p {port}]";*/
+/*	icon-theme = ;*/
+/*	application-fallback-icon = ;*/
+/*	combi-modi = "window,run";*/
+/*	scroll-method = 0;*/
+/*	pid = "/run/user/1000/rofi.pid";*/
+
+display-window = "Windows";
+display-drun = "Apps";
+display-emoji = "Emoji";
+display-calc = "Calculator";
+
+timeout {
+    action = "kb-cancel";
+    delay =  0;
+}
