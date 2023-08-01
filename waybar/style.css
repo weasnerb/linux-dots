@@ -40,6 +40,7 @@ window#waybar {
 #network,
 #bluetooth,
 #pulseaudio,
+#tray,
 #mode,
 #custom-spotify,
 #custom-nordvpn
@@ -74,3 +75,12 @@ window#waybar {
 #network.disconnected {
     background: red;
 }
+
+#pulseaudio.mic {
+    background: green;
+}
+#pulseaudio.mic.source-muted {
+    color: black;
+    background: red;
+}
+
