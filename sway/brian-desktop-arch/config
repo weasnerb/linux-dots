@@ -1,0 +1,204 @@
+set $monitorLeft DP-2
+set $monitorCenter DP-1
+set $monitorRight DP-3
+
+#
+# Output configuration
+#
+# You can get the names of your outputs by running: swaymsg -t get_outputs
+output $monitorLeft mode 2560x1440@119.998Hz position 0,0
+output $monitorCenter mode 2560x1440@143.998Hz position 2560,0
+output $monitorRight mode 2560x1440@59.951Hz position 5120,0
+
+
+# workspace labels
+# Note: workspaces can have any name you want, not just numbers.
+# Left Monitor
+set $wsl1 "L-1"
+set $wsl2 "L-2"
+set $wsl3 "L-3"
+set $wsl4 "L-4"
+set $wsl5 "L-5"
+set $wsl6 "L-6"
+set $wsl7 "L-7"
+set $wsl8 "L-8"
+set $wsl9 "L-9"
+set $wsl10 "L-10"
+# Center Monitor
+set $wsc1 "1"
+set $wsc2 "2"
+set $wsc3 "3"
+set $wsc4 "4"
+set $wsc5 "5"
+set $wsc6 "6"
+set $wsc7 "7"
+set $wsc8 "8"
+set $wsc9 "9"
+set $wsc10 "10"
+# Right Monitor
+set $wsr1 "R-1"
+set $wsr2 "R-2"
+set $wsr3 "R-3"
+set $wsr4 "R-4"
+set $wsr5 "R-5"
+set $wsr6 "R-6"
+set $wsr7 "R-7"
+set $wsr8 "R-8"
+set $wsr9 "R-9"
+set $wsr10 "R-10"
+
+# assign workspaces to monitors
+# Left Monitor
+workspace $wsl1 output $monitorLeft
+workspace $wsl2 output $monitorLeft
+workspace $wsl3 output $monitorLeft
+workspace $wsl4 output $monitorLeft
+workspace $wsl5 output $monitorLeft
+workspace $wsl6 output $monitorLeft
+workspace $wsl7 output $monitorLeft
+workspace $wsl8 output $monitorLeft
+workspace $wsl9 output $monitorLeft
+workspace $wsl10 output $monitorLeft
+# Center Monitor
+workspace $wsc1 output $monitorCenter
+workspace $wsc2 output $monitorCenter
+workspace $wsc3 output $monitorCenter
+workspace $wsc4 output $monitorCenter
+workspace $wsc5 output $monitorCenter
+workspace $wsc6 output $monitorCenter
+workspace $wsc7 output $monitorCenter
+workspace $wsc8 output $monitorCenter
+workspace $wsc9 output $monitorCenter
+workspace $wsc10 output $monitorCenter
+# Right Monitor
+workspace $wsr1 output $monitorRight
+workspace $wsr2 output $monitorRight
+workspace $wsr3 output $monitorRight
+workspace $wsr4 output $monitorRight
+workspace $wsr5 output $monitorRight
+workspace $wsr6 output $monitorRight
+workspace $wsr7 output $monitorRight
+workspace $wsr8 output $monitorRight
+workspace $wsr9 output $monitorRight
+workspace $wsr10 output $monitorRight
+
+# switch to workspace
+# Left Monitor
+bindsym $mod+1 workspace $wsl1
+bindsym $mod+2 workspace $wsl2
+bindsym $mod+3 workspace $wsl3
+bindsym $mod+4 workspace $wsl4
+bindsym $mod+5 workspace $wsl5
+bindsym $mod+6 workspace $wsl6
+bindsym $mod+7 workspace $wsl7
+bindsym $mod+8 workspace $wsl8
+bindsym $mod+9 workspace $wsl9
+bindsym $mod+0 workspace $wsl10
+# Center Monitor
+bindsym $mod+$alt+1 workspace $wsc1
+bindsym $mod+$alt+2 workspace $wsc2
+bindsym $mod+$alt+3 workspace $wsc3
+bindsym $mod+$alt+4 workspace $wsc4
+bindsym $mod+$alt+5 workspace $wsc5
+bindsym $mod+$alt+6 workspace $wsc6
+bindsym $mod+$alt+7 workspace $wsc7
+bindsym $mod+$alt+8 workspace $wsc8
+bindsym $mod+$alt+9 workspace $wsc9
+bindsym $mod+$alt+0 workspace $wsc10
+# Left Monitor
+bindsym $alt+1 workspace $wsr1
+bindsym $alt+2 workspace $wsr2
+bindsym $alt+3 workspace $wsr3
+bindsym $alt+4 workspace $wsr4
+bindsym $alt+5 workspace $wsr5
+bindsym $alt+6 workspace $wsr6
+bindsym $alt+7 workspace $wsr7
+bindsym $alt+8 workspace $wsr8
+bindsym $alt+9 workspace $wsr9
+bindsym $alt+0 workspace $wsr10
+
+# move focused container to workspace
+# Left Monitor
+bindsym $mod+Shift+1 move container to workspace $wsl1
+bindsym $mod+Shift+2 move container to workspace $wsl2
+bindsym $mod+Shift+3 move container to workspace $wsl3
+bindsym $mod+Shift+4 move container to workspace $wsl4
+bindsym $mod+Shift+5 move container to workspace $wsl5
+bindsym $mod+Shift+6 move container to workspace $wsl6
+bindsym $mod+Shift+7 move container to workspace $wsl7
+bindsym $mod+Shift+8 move container to workspace $wsl8
+bindsym $mod+Shift+9 move container to workspace $wsl9
+bindsym $mod+Shift+0 move container to workspace $wsl10
+# Center Monitor
+bindsym $mod+$alt+Shift+1 move container to workspace $wsc1
+bindsym $mod+$alt+Shift+2 move container to workspace $wsc2
+bindsym $mod+$alt+Shift+3 move container to workspace $wsc3
+bindsym $mod+$alt+Shift+4 move container to workspace $wsc4
+bindsym $mod+$alt+Shift+5 move container to workspace $wsc5
+bindsym $mod+$alt+Shift+6 move container to workspace $wsc6
+bindsym $mod+$alt+Shift+7 move container to workspace $wsc7
+bindsym $mod+$alt+Shift+8 move container to workspace $wsc8
+bindsym $mod+$alt+Shift+9 move container to workspace $wsc9
+bindsym $mod+$alt+Shift+0 move container to workspace $wsc10
+# Left Monitor
+bindsym $alt+Shift+1 move container to workspace $wsr1
+bindsym $alt+Shift+2 move container to workspace $wsr2
+bindsym $alt+Shift+3 move container to workspace $wsr3
+bindsym $alt+Shift+4 move container to workspace $wsr4
+bindsym $alt+Shift+5 move container to workspace $wsr5
+bindsym $alt+Shift+6 move container to workspace $wsr6
+bindsym $alt+Shift+7 move container to workspace $wsr7
+bindsym $alt+Shift+8 move container to workspace $wsr8
+bindsym $alt+Shift+9 move container to workspace $wsr9
+bindsym $alt+Shift+0 move container to workspace $wsr10
+
+# move focused container to workspace and switch to workspace
+# Left Monitor
+bindsym $mod+Control+1 move container to workspace $wsl1; workspace $wsl1
+bindsym $mod+Control+2 move container to workspace $wsl2; workspace $wsl2
+bindsym $mod+Control+3 move container to workspace $wsl3; workspace $wsl3
+bindsym $mod+Control+4 move container to workspace $wsl4; workspace $wsl4
+bindsym $mod+Control+5 move container to workspace $wsl5; workspace $wsl5
+bindsym $mod+Control+6 move container to workspace $wsl6; workspace $wsl6
+bindsym $mod+Control+7 move container to workspace $wsl7; workspace $wsl7
+bindsym $mod+Control+8 move container to workspace $wsl8; workspace $wsl8
+bindsym $mod+Control+9 move container to workspace $wsl9; workspace $wsl9
+bindsym $mod+Control+0 move container to workspace $wsl10; workspace $wsl10
+# Center Monitor
+bindsym $mod+$alt+Control+1 move container to workspace $wsc1; workspace $wsc1
+bindsym $mod+$alt+Control+2 move container to workspace $wsc2; workspace $wsc2
+bindsym $mod+$alt+Control+3 move container to workspace $wsc3; workspace $wsc3
+bindsym $mod+$alt+Control+4 move container to workspace $wsc4; workspace $wsc4
+bindsym $mod+$alt+Control+5 move container to workspace $wsc5; workspace $wsc5
+bindsym $mod+$alt+Control+6 move container to workspace $wsc6; workspace $wsc6
+bindsym $mod+$alt+Control+7 move container to workspace $wsc7; workspace $wsc7
+bindsym $mod+$alt+Control+8 move container to workspace $wsc8; workspace $wsc8
+bindsym $mod+$alt+Control+9 move container to workspace $wsc9; workspace $wsc9
+bindsym $mod+$alt+Control+0 move container to workspace $wsc10; workspace $wsc10
+# Left Monitor
+bindsym $alt+Control+1 move container to workspace $wsr1; workspace $wsr1
+bindsym $alt+Control+2 move container to workspace $wsr2; workspace $wsr2
+bindsym $alt+Control+3 move container to workspace $wsr3; workspace $wsr3
+bindsym $alt+Control+4 move container to workspace $wsr4; workspace $wsr4
+bindsym $alt+Control+5 move container to workspace $wsr5; workspace $wsr5
+bindsym $alt+Control+6 move container to workspace $wsr6; workspace $wsr6
+bindsym $alt+Control+7 move container to workspace $wsr7; workspace $wsr7
+bindsym $alt+Control+8 move container to workspace $wsr8; workspace $wsr8
+bindsym $alt+Control+9 move container to workspace $wsr9; workspace $wsr9
+bindsym $alt+Control+0 move container to workspace $wsr10; workspace $wsr10
+
+
+#
+# Application Specific workspaces
+#
+assign [class="discord"] workspace "$wsr9"
+# Spotify acts weird with assign.
+# @see https://github.com/swaywm/sway/issues/3793
+for_window [class="Spotify"] move window to workspace "$wsr10"
+
+#
+# Automount Samaba Drives
+#
+# Only doing this on Desktop due to laptop potentially not being on the correct network
+exec $HOME/.config/sway/custom-scripts/samba-user.sh
+exec $HOME/.config/sway/custom-scripts/samba-public.sh
