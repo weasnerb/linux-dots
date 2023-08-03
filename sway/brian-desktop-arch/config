@@ -1,12 +1,12 @@
-set $monitorLeft DP-2
+set $monitorLeft DP-3
 set $monitorCenter DP-1
-set $monitorRight DP-3
+set $monitorRight DP-2
 
 #
 # Output configuration
 #
 # You can get the names of your outputs by running: swaymsg -t get_outputs
-output $monitorLeft mode 2560x1440@119.998Hz position 0,0
+output $monitorLeft mode 2560x1440@143.998Hz position 0,0
 output $monitorCenter mode 2560x1440@143.998Hz position 2560,0
 output $monitorRight mode 2560x1440@59.951Hz position 5120,0
 
