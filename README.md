@@ -2,11 +2,35 @@
 
 These are the dot/config files that I use.
 
-Link to `~/.config` folder with `ln`
+Files and folders in the `src` directory map to `$HOME`
 
-Note: [Xorg-Wayland](https://archlinux.org/packages/extra/x86_64/xorg-xwayland/) is required for most of these applications to work.
+- Examples:
+    - `src/.zshrc` should be symlinked to `$HOME/.zshrc`
+    - `src/.config/sway` should be symlinked to `$HOME/.config/sway`
+
+## Install
+
+> WARNING: Running install.sh will overwrite/delete your current configs.
+> Run with care.
+
+In Terminal Run:
+```bash
+./install.sh
+```
+
+## Uninstall
+
+> WARNING: Running uninstall.sh will delete your current configs.
+> Run with care.
+
+In Terminal Run:
+```bash
+./uninstall.sh
+```
 
 ## Dependencies
+
+Note: [Xorg-Wayland](https://archlinux.org/packages/extra/x86_64/xorg-xwayland/) is required for most of these applications to work.
 
 - Terminal
     - [Alacritty](https://github.com/alacritty/alacritty)

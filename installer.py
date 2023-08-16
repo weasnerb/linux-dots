@@ -1,8 +1,8 @@
 import argparse
 from pathlib import Path
 
-INSTALL_DIR=Path.home().joinpath('.config')
-CURRENT_DIR=Path.cwd()
+USER_HOME_DIR=Path.home()
+SRC_DIR=Path.cwd().joinpath('src')
 
 parser = argparse.ArgumentParser(prog='Dot Installer', description='Linux Dot/Config file installer for weasnerb/linux-dots.')
 
@@ -21,33 +21,23 @@ def setupCli():
     subparser.add_parser('uninstall', help='Uninstall Dot Files.').set_defaults(func=uninstall)
 
 def install(args):
-    dirs = CURRENT_DIR.iterdir()
-    for dir in dirs:
-        if dir.is_dir():
-            if prompt_y_n(f"Install {dir.name}?"):
-                config_path = Path(INSTALL_DIR).joinpath(dir.name)
-                backup_config(config_path)
-                install_config(config_path)
+    configs = get_configs_in_path(SRC_DIR)
+    for config in configs:
+        config_path_relative_to_src = config.relative_to(SRC_DIR)
+        if prompt_y_n(f"Install {config_path_relative_to_src}?"):
+            config_path = USER_HOME_DIR.joinpath(config_path_relative_to_src)
+            backup_config(config_path)
+            install_config(config_path)
 
 def uninstall(args):
-    dirs = CURRENT_DIR.iterdir()
-    for dir in dirs:
-        if dir.is_dir():
-            if prompt_y_n(f"Uninstall {dir.name}?"):
-                config_path = Path(INSTALL_DIR).joinpath(dir.name)
-                uninstall_config(config_path)
-                restore_backup_config(config_path)
+    configs = get_configs_in_path(SRC_DIR)
+    for config in configs:
+        config_path_relative_to_src = config.relative_to(SRC_DIR)
+        if prompt_y_n(f"Uninstall {config_path_relative_to_src}?"):
+            config_path = USER_HOME_DIR.joinpath(config_path_relative_to_src)
+            uninstall_config(config_path)
+            restore_backup_config(config_path)
 
-def prompt_y_n(question):
-    while True:
-        result = input(question + ' (y/n):\n> ').lower()
-        if result in ['y', 'yes']:
-            return True
-        elif result in ['n', 'no']:
-            return False
-        else:
-            print('Invalid input.')
-            continue;
 
 def backup_config(config_path):
     # Check if config already exists, if so move to path.bak
@@ -77,10 +67,39 @@ def uninstall_config(config_path):
         print(f"Deleting {str(config_path)}")
         #config_path.unlink()
 
+def get_configs_in_path(dir_to_search):
+    configs_in_path = []
+
+    dirs = dir_to_search.iterdir()
+    for dir in dirs:
+        if is_dot_file(dir):
+            configs_in_path.append(dir)
+        elif dir.is_dir():
+            configs_in_path.extend(get_configs_in_path(dir))
+    
+    return configs_in_path
+
+# Check if a file is a dot/config file/folder
+# Will Return true if path is a file path and file starts with a `.`
+# OR if the path is a file/folder who's parent folder starts with a `.`
+def is_dot_file(path_to_check):
+    return (path_to_check.is_file() and str(path_to_check.name)[0] == '.') or (str(path_to_check.parent.name)[0] == '.')
+
+def prompt_y_n(question):
+    while True:
+        result = input(question + ' (y/n):\n> ').lower()
+        if result in ['y', 'yes']:
+            return True
+        elif result in ['n', 'no']:
+            return False
+        else:
+            print('Invalid input.')
+            continue;
 
 # Run Main
 try:
     main()
 except KeyboardInterrupt:
     # Do nothing, as we don't want to display error in console.
+    # Can't have empty except clause, so just print a new line.
     print()
