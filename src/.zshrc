@@ -42,7 +42,7 @@ bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 # vim mode
 bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'l' history-substring-search-down
+bindkey -M vicmd 'j' history-substring-search-down
 
 # Custom Aliases
 alias la="ls -a"
@@ -50,6 +50,7 @@ alias ll="ls -l"
 alias lla="ls -la"
 
 # Application Aliases
+alias vim="nvim"
 alias code="vscodium"
 alias lxappearance="GDK_BACKEND=x11 lxappearance"
 
