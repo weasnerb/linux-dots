@@ -10,25 +10,21 @@ Files and folders in the `src` directory map to `$HOME`
 
 ## Install
 
-> WARNING: Running install.sh will overwrite/delete your current configs.
-> Run with care.
-
 In Terminal Run:
 ```bash
-./install.sh
+./installer.py install
 ```
 
 ## Uninstall
 
-> WARNING: Running uninstall.sh will delete your current configs.
-> Run with care.
-
 In Terminal Run:
 ```bash
-./uninstall.sh
+./installer.py uninstall
 ```
 
 ## Dependencies
+
+> Currently not up to date, look into each config to see what may be required.
 
 Note: [Xorg-Wayland](https://archlinux.org/packages/extra/x86_64/xorg-xwayland/) is required for most of these applications to work.
 
