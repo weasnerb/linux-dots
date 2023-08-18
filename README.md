@@ -2,11 +2,31 @@
 
 These are the dot/config files that I use.
 
-Link to `~/.config` folder with `ln`
+Files and folders in the `src` directory map to `$HOME`
 
-Note: [Xorg-Wayland](https://archlinux.org/packages/extra/x86_64/xorg-xwayland/) is required for most of these applications to work.
+- Examples:
+    - `src/.zshrc` should be symlinked to `$HOME/.zshrc`
+    - `src/.config/sway` should be symlinked to `$HOME/.config/sway`
+
+## Install
+
+In Terminal Run:
+```bash
+./installer.py install
+```
+
+## Uninstall
+
+In Terminal Run:
+```bash
+./installer.py uninstall
+```
 
 ## Dependencies
+
+> Currently not up to date, look into each config to see what may be required.
+
+Note: [Xorg-Wayland](https://archlinux.org/packages/extra/x86_64/xorg-xwayland/) is required for most of these applications to work.
 
 - Terminal
     - [Alacritty](https://github.com/alacritty/alacritty)
