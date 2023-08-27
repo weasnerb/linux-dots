@@ -1,3 +1,4 @@
 require("main.remap")
+require("main.set")
 require("main.package-manager")
-print("hello from main")
+
