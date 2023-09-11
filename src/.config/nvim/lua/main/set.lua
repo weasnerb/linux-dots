@@ -18,8 +18,9 @@ vim.opt.backup = false
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
--- setting this to true ignores my terminal "wal" color config
-vim.opt.termguicolors = false
+-- Setting this to true ignores my terminal "wal" color config
+-- However this is required if we want to use colorschemes. (Which we do)
+vim.opt.termguicolors = true
 
 vim.opt.scrolloff = 8
 

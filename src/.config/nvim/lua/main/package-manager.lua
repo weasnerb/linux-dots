@@ -45,7 +45,7 @@ require("lazy").setup({
 			opts = {
 				options = {
 				icons_enabled = false,
-				theme = 'onedark',
+				theme = 'dracula-nvim',
 				component_separators = '|',
 				section_separators = '',
 			},
@@ -69,6 +69,9 @@ require("lazy").setup({
       -- or leave it empty to use the default settings
       -- refer to the configuration section below
     }
+  },
+  {
+      "Mofiqul/dracula.nvim"
   }
 }, {})
 
