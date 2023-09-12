@@ -44,8 +44,9 @@ def install(args):
     Main process for installing dot configs
     """
     configs = get_dot_configs_in_path(SRC_DIR)
+    arg_all = args['all']
     arg_configs = args['config(s)']
-    if len(arg_configs) > 0:
+    if not arg_all and len(arg_configs) > 0:
         config_paths_relative_to_src_as_str = list(map(lambda p: str(p.relative_to(SRC_DIR)), configs))
         configs_to_install = list(set(config_paths_relative_to_src_as_str) & set(arg_configs))
         if len(configs_to_install) > 0: 
@@ -70,16 +71,25 @@ def uninstall(args):
     Why? Well, if we ever delete/remove a config from this repo we won't ask to uninstall it as it won't be in the src folder.
     That means that the stuff we deleted from this repo will break the symbolic link we created during install, but the symbolic link won't be deleted.
     """
-    print(args['config(s)'])
-    return
     configs = get_dot_configs_in_path(SRC_DIR)
-    for src_config_path in configs:
-        config_path_relative_to_src = src_config_path.relative_to(SRC_DIR)
-        installed_config_path = USER_HOME_DIR.joinpath(config_path_relative_to_src)
-        if is_config_installed(installed_config_path) and (args['all'] or prompt_y_n(f"Uninstall {config_path_relative_to_src}?")):
-            uninstall_config(installed_config_path)
-            restore_backup_config(installed_config_path)
-            print("Done")
+    arg_all = args['all']
+    arg_configs = args['config(s)']
+    if not arg_all and len(arg_configs) > 0:
+        config_paths_relative_to_src_as_str = list(map(lambda p: str(p.relative_to(SRC_DIR)), configs))
+        configs_to_uninstall = list(set(config_paths_relative_to_src_as_str) & set(arg_configs))
+        if len(configs_to_uninstall) > 0: 
+            print(f"Should uninstall {', '.join(arg_configs)}")
+            # INSTALL
+        else:
+            print(f"Configs listed ({', '.join(arg_configs)}) are not available for removal")
+    else:
+        for src_config_path in configs:
+            config_path_relative_to_src = src_config_path.relative_to(SRC_DIR)
+            installed_config_path = USER_HOME_DIR.joinpath(config_path_relative_to_src)
+            if is_config_installed(installed_config_path) and (arg_all or prompt_y_n(f"Uninstall {config_path_relative_to_src}?")):
+                uninstall_config(installed_config_path)
+                restore_backup_config(installed_config_path)
+                print("Done")
 
 def backup_config(config_path):
     """
@@ -187,3 +197,4 @@ except KeyboardInterrupt:
     # Swallow Error, as we don't want to display the python error in console.
     # Can't have empty except clause, so just print an empty line.
     print()
+
