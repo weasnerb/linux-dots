@@ -49,6 +49,9 @@ alias la="ls -a"
 alias ll="ls -l"
 alias lla="ls -la"
 
+# Workspace Aliases
+alias wg="cd ~/workspace-git/"
+
 # Application Aliases
 alias vim="nvim"
 alias code="vscodium"
