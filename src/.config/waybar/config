@@ -2,13 +2,15 @@
     "layer": "top", // Waybar at top layer
     // Choose the order of the modules
     "modules-left": [
-        "wlr/workspaces",
-        "wlr/mode",
+        "sway/workspaces",
+        "sway/mode",
+        "hyprland/workspaces",
         "custom/nordvpn",
         "custom/spotify"
     ],
     "modules-center": [
-        "wlr/window"
+        "sway/window",
+        "hyprland/window"
     ],
     "modules-right": [
         "network",
@@ -22,7 +24,7 @@
         "clock"
     ],
     // Modules
-    "wlr/workspaces": {
+    "sway/workspaces": {
         "disable-scroll": true,
         "all-outputs": true,
         "format": "{name}: {icon}",
@@ -39,10 +41,30 @@
             "default": "󰐽"
         }
     },
-    "wlr/mode": {
+    "sway/mode": {
         "format": "<span style=\"italic\">{}</span>"
     },
-    "wlr/window": {
+    "sway/window": {
+        "max-length": 60
+    },
+    "hyprland/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "format": "{name}: {icon}",
+        "format-icons": {
+            "1": "󰣇",
+            "2": "󰅴",
+            "3": "󱂛",
+            "4": "󰘦",
+            "5": "󰆼",
+            "9": "󰍪",
+            "10": "󰫔",
+            "urgent": "󰗖",
+            "focused": "󰐾",
+            "default": "󰐽"
+        }
+    },
+    "hyprland/window": {
         "max-length": 60
     },
     "clock#calendar": {
