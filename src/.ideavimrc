@@ -1,0 +1,70 @@
+-- Idea Vim Config
+-- Modified version of nvim config with inspiration from <https://www.cyberwizard.io/posts/the-ultimate-ideavim-setup/>
+
+set number
+set relativenumber
+
+set scrolloff=8
+
+set smartindent=true
+
+set showmode
+set showcmd
+
+set hlsearch=false
+set incsearch=true
+
+
+-- Remap
+let mapleader = " "
+
+-- Use alt n and p for tab navigation
+nnoremap <A-n> :tabnext<CR>
+nnoremap <A-p> :tabprev<CR>
+
+-- Use alt h/j/k/l for pane navigation
+nnoremap <A-h> <C-w>h
+nnoremap <A-l> <C-w>l
+nnoremap <A-k> <C-w>k
+nnoremap <A-j> <C-w>j
+
+-- Method Jumping
+nnoremap [[ <Action>(MethodUp)
+nnoremap ]] <Action>(MethodDown)
+
+-- Keep highlighted values when changing indentation
+vnoremap < <gv
+vnoremap > >gv
+
+-- Popup Menu
+inoremap <C-j> <Action>(PopupMenu-selectNext)
+inoremap <C-k> <Action>(PopupMenu-selectPrev)
+
+-- Move highlighted lines up or down
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+-- Keep cursor in current position when appending the line below to current line
+nnoremap J mzJ`z
+
+-- Keep cursor in center of screen when doing half page jumps
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+
+-- Keep cursor in center of screen when doing search
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+-- Paste, deleting highlighted content without putting deleted content into register
+xnoremap <leader>p "_dP
+
+-- Yank to system clipboard
+nnoremap <leader>y "+y
+vnoremap <leader>y "+y
+-- Not really sure what capitol "+Y is for?? Yank till end of Line
+nnoremap <leader>Y "+Y
+
+-- Delete to void register
+nnoremap <leader>d "_d
+vnoremap <leader>d "_d
+
