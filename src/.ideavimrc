@@ -1,6 +1,12 @@
 -- Idea Vim Config
--- Modified version of nvim config with inspiration from <https://www.cyberwizard.io/posts/the-ultimate-ideavim-setup/>
 
+-- Modified version of nvim config with inspiration from:
+-- - <https://www.cyberwizard.io/posts/the-ultimate-ideavim-setup/>
+-- For full list of ideavim actions run `:actionlist [withOptionalSearch]`
+
+--
+-- Global Defaults
+--
 set number
 set relativenumber
 
@@ -14,39 +20,82 @@ set showcmd
 set hlsearch=false
 set incsearch=true
 
-
+--
 -- Remap
+--
 let mapleader = " "
 
--- Use alt n and p for tab navigation
-nnoremap <A-n> :tabnext<CR>
-nnoremap <A-p> :tabprev<CR>
+--
+-- Editor Navigation
+--
+-- Popup Navigation (Doesn't seem to work, but is in the actionlist?)
+inoremap <C-j> <Action>(PopupMenu-selectNext)
+inoremap <C-k> <Action>(PopupMenu-selectPrevious)
 
--- Use alt h/j/k/l for pane navigation
+-- Tab Navigation
+-- Use alt n and N for tab navigation
+nnoremap <A-n> :tabnext<CR>
+-- Need to use <A-S-n> as <A-N> doesn't bind properly.
+nnoremap <A-S-n> :tabprev<CR>
+
+-- Close Active Tab
+map <leader>q <Action>(CloseContent)
+
+-- Pane Navigation
 nnoremap <A-h> <C-w>h
 nnoremap <A-l> <C-w>l
 nnoremap <A-k> <C-w>k
 nnoremap <A-j> <C-w>j
 
--- Method Jumping
-nnoremap [[ <Action>(MethodUp)
-nnoremap ]] <Action>(MethodDown)
+-- Window Splits
+map <leader>ws <Action>(SplitVertically)
+map <leader>wh <Action>(SplitHorizontally)
+map <leader>wu <Action>(Unsplit)
+map <leader>wm <Action>(MoveEditorToOppositeTabGroup)
 
--- Keep highlighted values when changing indentation
-vnoremap < <gv
-vnoremap > >gv
+-- Display Modes
+map <leader>dd <Action>(ToggleDistractionFreeMode)
+map <leader>dz <Action>(ToggleZenMode)
+map <leader>df <Action>(ToggleFullScreen)
 
--- Popup Menu
-inoremap <C-j> <Action>(PopupMenu-selectNext)
-inoremap <C-k> <Action>(PopupMenu-selectPrev)
+--
+-- Toggle Editor Sidetab Tools
+--
+-- Close Active/All Sidetab Tools (Must be in code, so press <Esc> first)
+map <leader>tq <Action>(HideActiveWindow)
+map <leader>tqa <Action>(HideAllWindows)
+-- Files
+map <leader>tf <Action>(ActivateProjectToolWindow)
+-- File Structure
+map <leader>ts <Action>(ActivateStructureToolWindow)
+-- Database
+map <leader>td <Action>(ActivateDatabaseToolWindow)
+-- Terminal
+map <leader>tt <Action>(ActivateTerminalToolWindow)
+-- Code Runner
+map <leader>tcr <Action>(ActivateRunToolWindow)
+-- Code Debug
+map <leader>tcd <Action>(ActivateDebugToolWindow)
+-- Code Problems
+map <leader>tcp <Action>(ActivateProblemsViewToolWindow)
 
--- Move highlighted lines up or down
-vnoremap J :m '>+1<CR>gv=gv
-vnoremap K :m '<-2<CR>gv=gv
+--
+-- File Navigation
+--
+-- Jumps
+nmap <leader>jf <Action>(Back)
+nmap <leader>jb <Action>(Forward)
 
--- Keep cursor in current position when appending the line below to current line
-nnoremap J mzJ`z
+-- Finding files
+map <leader><leader> <Action>(RecentFiles)
+map <leader>fr <Action>(RecentFiles)
+map <leader>ff <Action>(GotoFile)
+map <leader>fl <Action>(RecentLocations)
+map <leader>fs <Action>(NewScratchFile)
 
+--
+-- Code Navigation
+--
 -- Keep cursor in center of screen when doing half page jumps
 nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
@@ -55,13 +104,55 @@ nnoremap <C-u> <C-u>zz
 nnoremap n nzzzv
 nnoremap N Nzzzv
 
+-- Jumps
+nmap <leader>jd <Action>(GotoDeclaration)
+nmap <leader>jtd <Action>(GotoTypeDeclaration)
+nmap <leader>ji <Action>(GotoImplementation)
+nmap <leader>jt <Action>(GotoTest)
+nmap <leader>ju <Action>(ShowUsages)
+
+--
+-- Code Editing
+--
+-- Keep highlighted values when changing indentation
+vnoremap < <gv
+vnoremap > >gv
+
+-- Move highlighted lines up or down
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+-- Comment highlighted lines
+map <leader>c <Action>(CommentByLineComment)
+
+-- Keep cursor in current position when appending the line below to current line
+nnoremap J mzJ`z
+
+-- Refactoring
+map <leader>rr <Action>(Refactorings.QuickListPopupAction)
+map <leader>rn <Action>(RenameElement)
+map <leader>rem <Action>(ExtractMethod)
+map <leader>riv <Action>(IntroduceVariable)
+map <leader>rif <Action>(IntroduceField)
+map <leader>rs <Action>(ChangeSignature)
+
+--
+-- Searching
+--
+-- Search Everywhere (Files/Actions/Classes/Symbols/Git/etc)
+map <leader>se <Action>(SearchEverywhere)
+map <leader>sf <Action>(FindInPath)
+
+--
+-- Copy/Cut/Paste
+--
 -- Paste, deleting highlighted content without putting deleted content into register
 xnoremap <leader>p "_dP
 
 -- Yank to system clipboard
 nnoremap <leader>y "+y
 vnoremap <leader>y "+y
--- Not really sure what capitol "+Y is for?? Yank till end of Line
+-- Yank till end of line to system clipboard
 nnoremap <leader>Y "+Y
 
 -- Delete to void register
