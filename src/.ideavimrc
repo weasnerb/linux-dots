@@ -83,8 +83,8 @@ map <leader>tcp <Action>(ActivateProblemsViewToolWindow)
 -- File Navigation
 --
 -- Jumps
-nmap <leader>jf <Action>(Back)
-nmap <leader>jb <Action>(Forward)
+nmap <leader>jb <Action>(Back)
+nmap <leader>jf <Action>(Forward)
 
 -- Finding files
 map <leader><leader> <Action>(RecentFiles)
@@ -131,7 +131,7 @@ nnoremap J mzJ`z
 -- Refactoring
 map <leader>rr <Action>(Refactorings.QuickListPopupAction)
 map <leader>rn <Action>(RenameElement)
-map <leader>rem <Action>(ExtractMethod)
+map <leader>re <Action>(ExtractMethod)
 map <leader>riv <Action>(IntroduceVariable)
 map <leader>rif <Action>(IntroduceField)
 map <leader>rs <Action>(ChangeSignature)
