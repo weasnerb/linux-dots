@@ -53,9 +53,7 @@ require("lazy").setup({
 	},
   {
     'lukas-reineke/indent-blankline.nvim',
-    opts = {
-      show_trailing_blankline_indent = false,
-    },
+    main = "ibl"
   },
   {
     "folke/which-key.nvim",
