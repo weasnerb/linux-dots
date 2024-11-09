@@ -2,9 +2,9 @@
 # Display
 #
 # See https://wiki.hyprland.org/Configuring/Monitors/
-$monitorLeft = DP-3
+$monitorLeft = DP-2
 $monitorCenter = DP-1
-$monitorRight = DP-2
+$monitorRight = DP-3
 
 monitor = $monitorLeft, 2560x1440@143.998, 0x0, 1
 monitor = $monitorCenter, 2560x1440@143.998, 2560x0, 1
@@ -46,3 +46,4 @@ bind = $mainMod, mouse_up, workspace, e-1
 # Move/resize windows with mainMod + LMB/RMB and dragging
 bindm = $mainMod, mouse:272, movewindow
 bindm = $mainMod, mouse:273, resizewindow
+

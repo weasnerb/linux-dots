@@ -1,0 +1,161 @@
+-- Idea Vim Config
+
+-- Modified version of nvim config with inspiration from:
+-- - <https://www.cyberwizard.io/posts/the-ultimate-ideavim-setup/>
+-- For full list of ideavim actions run `:actionlist [withOptionalSearch]`
+
+--
+-- Global Defaults
+--
+set number
+set relativenumber
+
+set scrolloff=8
+
+set smartindent=true
+
+set showmode
+set showcmd
+
+set hlsearch=false
+set incsearch=true
+
+--
+-- Remap
+--
+let mapleader = " "
+
+--
+-- Editor Navigation
+--
+-- Popup Navigation (Doesn't seem to work, but is in the actionlist?)
+inoremap <C-j> <Action>(PopupMenu-selectNext)
+inoremap <C-k> <Action>(PopupMenu-selectPrevious)
+
+-- Tab Navigation
+-- Use alt n and N for tab navigation
+nnoremap <A-n> :tabnext<CR>
+-- Need to use <A-S-n> as <A-N> doesn't bind properly.
+nnoremap <A-S-n> :tabprev<CR>
+
+-- Close Active Tab
+map <leader>q <Action>(CloseContent)
+
+-- Pane Navigation
+nnoremap <A-h> <C-w>h
+nnoremap <A-l> <C-w>l
+nnoremap <A-k> <C-w>k
+nnoremap <A-j> <C-w>j
+
+-- Window Splits
+map <leader>ws <Action>(SplitVertically)
+map <leader>wh <Action>(SplitHorizontally)
+map <leader>wu <Action>(Unsplit)
+map <leader>wm <Action>(MoveEditorToOppositeTabGroup)
+
+-- Display Modes
+map <leader>dd <Action>(ToggleDistractionFreeMode)
+map <leader>dz <Action>(ToggleZenMode)
+map <leader>df <Action>(ToggleFullScreen)
+
+--
+-- Toggle Editor Sidetab Tools
+--
+-- Close Active/All Sidetab Tools (Must be in code, so press <Esc> first)
+map <leader>tq <Action>(HideActiveWindow)
+map <leader>tqa <Action>(HideAllWindows)
+-- Files
+map <leader>tf <Action>(ActivateProjectToolWindow)
+-- File Structure
+map <leader>ts <Action>(ActivateStructureToolWindow)
+-- Database
+map <leader>td <Action>(ActivateDatabaseToolWindow)
+-- Terminal
+map <leader>tt <Action>(ActivateTerminalToolWindow)
+-- Code Runner
+map <leader>tcr <Action>(ActivateRunToolWindow)
+-- Code Debug
+map <leader>tcd <Action>(ActivateDebugToolWindow)
+-- Code Problems
+map <leader>tcp <Action>(ActivateProblemsViewToolWindow)
+
+--
+-- File Navigation
+--
+-- Jumps
+nmap <leader>jb <Action>(Back)
+nmap <leader>jf <Action>(Forward)
+
+-- Finding files
+map <leader><leader> <Action>(RecentFiles)
+map <leader>fr <Action>(RecentFiles)
+map <leader>ff <Action>(GotoFile)
+map <leader>fl <Action>(RecentLocations)
+map <leader>fs <Action>(NewScratchFile)
+
+--
+-- Code Navigation
+--
+-- Keep cursor in center of screen when doing half page jumps
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+
+-- Keep cursor in center of screen when doing search
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+-- Jumps
+nmap <leader>jd <Action>(GotoDeclaration)
+nmap <leader>jtd <Action>(GotoTypeDeclaration)
+nmap <leader>ji <Action>(GotoImplementation)
+nmap <leader>jt <Action>(GotoTest)
+nmap <leader>ju <Action>(ShowUsages)
+
+--
+-- Code Editing
+--
+-- Keep highlighted values when changing indentation
+vnoremap < <gv
+vnoremap > >gv
+
+-- Move highlighted lines up or down
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+-- Comment highlighted lines
+map <leader>c <Action>(CommentByLineComment)
+
+-- Keep cursor in current position when appending the line below to current line
+nnoremap J mzJ`z
+
+-- Refactoring
+map <leader>rr <Action>(Refactorings.QuickListPopupAction)
+map <leader>rn <Action>(RenameElement)
+map <leader>re <Action>(ExtractMethod)
+map <leader>riv <Action>(IntroduceVariable)
+map <leader>rif <Action>(IntroduceField)
+map <leader>rs <Action>(ChangeSignature)
+
+--
+-- Searching
+--
+-- Search Everywhere (Files/Actions/Classes/Symbols/Git/etc)
+map <leader>se <Action>(SearchEverywhere)
+map <leader>sf <Action>(FindInPath)
+
+--
+-- Copy/Cut/Paste
+--
+-- Paste, deleting highlighted content without putting deleted content into register
+xnoremap <leader>p "_dP
+
+-- Yank to system clipboard
+nnoremap <leader>y "+y
+vnoremap <leader>y "+y
+-- Yank till end of line to system clipboard
+nnoremap <leader>Y "+Y
+
+-- Delete to void register
+nnoremap <leader>d "_d
+vnoremap <leader>d "_d
+
