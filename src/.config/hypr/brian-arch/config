@@ -2,7 +2,7 @@
 # Display
 #
 # See https://wiki.hyprland.org/Configuring/Monitors/
-monitor = , preferred, auto, 1.6
+monitor = , preferred, auto, 1.25
 
 #
 # Workspaces:
