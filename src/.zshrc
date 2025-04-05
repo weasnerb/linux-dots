@@ -49,6 +49,10 @@ alias la="ls -a"
 alias ll="ls -l"
 alias lla="ls -la"
 
+# Be Kind Alias
+# https://www.explainxkcd.com/wiki/index.php/149:_Sandwich
+alias please="sudo"
+
 # Workspace Aliases
 alias wg="cd ~/workspace-git/"
 
