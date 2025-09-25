@@ -54,7 +54,6 @@ alias wg="cd ~/workspace-git/"
 
 # Application Aliases
 alias vim="nvim"
-alias code="vscodium"
 alias lxappearance="GDK_BACKEND=x11 lxappearance"
 
 

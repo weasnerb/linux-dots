@@ -33,13 +33,15 @@ inoremap <C-j> <Action>(PopupMenu-selectNext)
 inoremap <C-k> <Action>(PopupMenu-selectPrevious)
 
 -- Tab Navigation
--- Use alt n and N for tab navigation
-nnoremap <A-n> :tabnext<CR>
--- Need to use <A-S-n> as <A-N> doesn't bind properly.
-nnoremap <A-S-n> :tabprev<CR>
+-- Use Ctrl + l and Ctrl + h for tab navigation
+nnoremap <C-l> :tabnext<CR>
+nnoremap <C-h> :tabprev<CR>
 
 -- Close Active Tab
+-- Will close the currently focused side tab too (like terminal)
 map <leader>q <Action>(CloseContent)
+-- Specific to code editor
+map <leader>Q <Action>(CloseAllEditorsButActive)
 
 -- Pane Navigation
 nnoremap <A-h> <C-w>h
@@ -52,11 +54,7 @@ map <leader>ws <Action>(SplitVertically)
 map <leader>wh <Action>(SplitHorizontally)
 map <leader>wu <Action>(Unsplit)
 map <leader>wm <Action>(MoveEditorToOppositeTabGroup)
-
--- Display Modes
-map <leader>dd <Action>(ToggleDistractionFreeMode)
-map <leader>dz <Action>(ToggleZenMode)
-map <leader>df <Action>(ToggleFullScreen)
+map <leader>wq <Action>(CloseEditorsGroup)
 
 --
 -- Toggle Editor Sidetab Tools
@@ -64,20 +62,24 @@ map <leader>df <Action>(ToggleFullScreen)
 -- Close Active/All Sidetab Tools (Must be in code, so press <Esc> first)
 map <leader>tq <Action>(HideActiveWindow)
 map <leader>tqa <Action>(HideAllWindows)
--- Files
-map <leader>tf <Action>(ActivateProjectToolWindow)
--- File Structure
-map <leader>ts <Action>(ActivateStructureToolWindow)
--- Database
-map <leader>td <Action>(ActivateDatabaseToolWindow)
--- Terminal
-map <leader>tt <Action>(ActivateTerminalToolWindow)
--- Code Runner
-map <leader>tcr <Action>(ActivateRunToolWindow)
 -- Code Debug
 map <leader>tcd <Action>(ActivateDebugToolWindow)
 -- Code Problems
 map <leader>tcp <Action>(ActivateProblemsViewToolWindow)
+-- Code Runner
+map <leader>tcr <Action>(ActivateRunToolWindow)
+-- Database
+map <leader>td <Action>(ActivateDatabaseToolWindow)
+-- Files
+map <leader>tf <Action>(ActivateProjectToolWindow)
+-- File Structure
+map <leader>ts <Action>(ActivateStructureToolWindow)
+-- Git Graph
+map <leader>tg <Action>(ActivateVersionControlToolWindow)
+-- Git Commit
+map <leader>tgc <Action>(ActivateCommitToolWindow)
+-- Terminal
+map <leader>tt <Action>(ActivateTerminalToolWindow)
 
 --
 -- File Navigation
@@ -106,9 +108,9 @@ nnoremap N Nzzzv
 
 -- Jumps
 nmap <leader>jd <Action>(GotoDeclaration)
-nmap <leader>jtd <Action>(GotoTypeDeclaration)
 nmap <leader>ji <Action>(GotoImplementation)
 nmap <leader>jt <Action>(GotoTest)
+nmap <leader>jtd <Action>(GotoTypeDeclaration)
 nmap <leader>ju <Action>(ShowUsages)
 
 --
@@ -124,6 +126,9 @@ vnoremap K :m '<-2<CR>gv=gv
 
 -- Comment highlighted lines
 map <leader>c <Action>(CommentByLineComment)
+
+-- Surround highlighted values
+map <leader>sw <Action>(SurroundWith)
 
 -- Keep cursor in current position when appending the line below to current line
 nnoremap J mzJ`z
@@ -158,4 +163,6 @@ nnoremap <leader>Y "+Y
 -- Delete to void register
 nnoremap <leader>d "_d
 vnoremap <leader>d "_d
+nnoremap <leader>dd "_dd
+vnoremap <leader>dd "_dd
 
