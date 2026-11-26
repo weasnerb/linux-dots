@@ -7,8 +7,9 @@ set -euo pipefail
 
 sink=@DEFAULT_AUDIO_SINK@
 case "${1:-}" in
-    up)   wpctl set-volume -l 1.0 "$sink" 2%+ ;;   # -l 1.0 caps at 100%
-    down) wpctl set-volume "$sink" 2%- ;;
+    # Changing the volume also unmutes, like the old `amixer ... unmute` binds.
+    up)   wpctl set-mute "$sink" 0; wpctl set-volume -l 1.0 "$sink" 2%+ ;;   # -l 1.0 caps at 100%
+    down) wpctl set-mute "$sink" 0; wpctl set-volume "$sink" 2%- ;;
     mute) wpctl set-mute "$sink" toggle ;;
     *)    echo "usage: $0 up|down|mute" >&2; exit 2 ;;
 esac
