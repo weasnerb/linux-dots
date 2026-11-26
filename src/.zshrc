@@ -7,8 +7,10 @@ fi
 
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
-HISTSIZE=1000
-SAVEHIST=1000
+# Raised from the zsh-newuser-install default of 1000, which was too short to
+# keep even a year of history.
+HISTSIZE=50000
+SAVEHIST=50000
 bindkey -v
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
@@ -56,6 +58,9 @@ alias please="sudo"
 # Workspace Aliases
 alias wg="cd ~/workspace-git/"
 
+# Claude Home Alias
+alias ch="cd ~/claude-home && claude"
+
 # Application Aliases
 alias vim="nvim"
 alias lxappearance="GDK_BACKEND=x11 lxappearance"
@@ -65,8 +70,26 @@ alias lxappearance="GDK_BACKEND=x11 lxappearance"
 # Pip Install Program Location
 export PATH="$HOME/.local/bin:$PATH"
 
-# Nvm Source
-source /usr/share/nvm/init-nvm.sh
+# Nvm Source -- lazy loaded.
+#
+# Sourcing init-nvm.sh directly cost ~520 ms on every single shell start
+# (measured 668 ms -> 145 ms with it removed), which was 78% of zsh startup.
+# Most of that is nvm.sh plus the bash-style completion script it pulls in.
+# Instead, define stubs that load nvm the first time one of its commands is
+# actually used.
+#
+# Consequence: powerlevel10k's `nvm` prompt segment needs nvm's shell functions
+# to report a version, so it stays hidden until nvm loads in that shell.
+export NVM_DIR="$HOME/.nvm"
+_load_nvm() {
+    unset -f nvm node npm npx corepack 2>/dev/null
+    source /usr/share/nvm/init-nvm.sh
+}
+nvm()      { _load_nvm; nvm "$@"; }
+node()     { _load_nvm; node "$@"; }
+npm()      { _load_nvm; npm "$@"; }
+npx()      { _load_nvm; npx "$@"; }
+corepack() { _load_nvm; corepack "$@"; }
 
 #
 # Import pywal bg generated colorscheme
