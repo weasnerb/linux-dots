@@ -53,11 +53,13 @@ def get_dns_info(status):
         return None
 
     # Drop the tailnet's own suffix; only custom split-DNS domains are interesting.
-    suffix = status.get('MagicDNSSuffix') or ''
+    # With MagicDNS off the suffix is empty, and every string ends with '', so
+    # only filter on it when there is one.
+    suffix = (status.get('MagicDNSSuffix') or '').rstrip('.')
     routes = []
     for domain in (dns_info.get('SplitDNSRoutes') or {}):
         bare = domain.rstrip('.')
-        if bare and bare != 'ts.net' and not bare.endswith(suffix):
+        if bare and bare != 'ts.net' and not (suffix and bare.endswith(suffix)):
             routes.append(bare)
     dns_info['_routes'] = sorted(routes)
     return dns_info

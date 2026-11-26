@@ -93,9 +93,10 @@
         "format": "{}",
         "return-type": "json",
         "exec": "$HOME/.config/waybar/custom-modules/performance.py 2> /dev/null",
-        // Signals the running script, which switches in-process (no Python
-        // start-up per click) and updates the icon immediately.
-        "on-click": "kill -USR1 $(cat $XDG_RUNTIME_DIR/waybar-performance.pid)",
+        // Signals every running copy (one per monitor); they update their icons
+        // immediately and the primary copy switches the profile in-process (no
+        // Python start-up per click). Pattern must match PROCESS_PATTERN.
+        "on-click": "pkill -USR1 -f '^python3 [^ ]*/custom-modules/performance\\.py$'",
         "on-click-right": "alacritty -e htop"
     },
     "battery": {
@@ -182,8 +183,10 @@
         "max-length": 40,
         "exec": "$HOME/.config/waybar/custom-modules/media.py 2> /dev/null",
         "exec-if": "command -v playerctl",
-        "on-click": "playerctl play-pause",
-        "on-click-right": "playerctl next"
+        // Control the player the module is showing (media.py records it),
+        // not whichever player playerctl would pick by itself.
+        "on-click": "playerctl -p \"$(cat $XDG_RUNTIME_DIR/waybar-media-player)\" play-pause",
+        "on-click-right": "playerctl -p \"$(cat $XDG_RUNTIME_DIR/waybar-media-player)\" next"
     },
     "custom/tailscale": {
         "format": "{}",

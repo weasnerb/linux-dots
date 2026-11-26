@@ -9,12 +9,17 @@ Run with no arguments, it stays running and prints one JSON line per update
   - tooltip: profile, total and per-core CPU, RAM percent and amount used
 It updates every INTERVAL seconds, and immediately when the profile changes.
 
-Clicking sends SIGUSR1 to this running process (pid in PID_FILE), which
-switches to the next profile itself. Doing it in-process avoids starting
-Python on every click (~0.25s), and the icon changes at once instead of
-waiting the ~0.35s tlp-pd takes to apply TLP and confirm. The requested
-profile is remembered until tlp-pd confirms it, so quick repeated clicks each
-advance one step. `performance.py cycle` sends the same signal from a shell.
+Waybar runs one copy per bar, i.e. per monitor. Clicking any bar sends
+SIGUSR1 to every copy (pkill, matched on the command line, so no pid file can
+go stale). Each copy shows the next profile at once, but only the *primary*
+copy (the one holding LOCK_FILE) asks tlp-pd to switch and handles the battery,
+so there is one switch and one set of notifications however many bars there
+are. If the primary's bar goes away, another copy takes the lock on its next
+tick. Doing this in-process avoids starting Python on every click (~0.25s),
+and the icon changes at once instead of waiting the ~0.35s tlp-pd takes to
+apply TLP and confirm. The requested profile is remembered until tlp-pd
+confirms it, so quick repeated clicks each advance one step.
+`performance.py cycle` sends the same signal from a shell.
 
 Low battery: on battery power at <= BATTERY_WARNING percent it shows an urgent
 notification and switches to power-saver; at <= BATTERY_CRITICAL a second
@@ -24,13 +29,20 @@ the notification is closed, and if this script was what switched to
 power-saver it goes back to performance (TLP's own AC auto-switch would skip
 it, since it sees the power-saver switch as a manual change).
 """
-import json
-import os
 import signal
-import sys
-import time
 
-from gi.repository import Gio, GLib
+# SIGUSR1's default action kills the process. Ignore it until the GLib handler
+# is installed, so a click while this copy is still starting up is harmless.
+signal.signal(signal.SIGUSR1, signal.SIG_IGN)
+
+import fcntl  # noqa: E402
+import json  # noqa: E402
+import os  # noqa: E402
+import subprocess  # noqa: E402
+import sys  # noqa: E402
+import time  # noqa: E402
+
+from gi.repository import Gio, GLib  # noqa: E402
 
 INTERVAL = 2
 THRESHOLD = 80
@@ -39,8 +51,11 @@ BUS_NAME = 'org.freedesktop.UPower.PowerProfiles'
 OBJ_PATH = '/org/freedesktop/UPower/PowerProfiles'
 IFACE = 'org.freedesktop.UPower.PowerProfiles'
 
-PID_FILE = os.path.join(
-    os.environ.get('XDG_RUNTIME_DIR') or '/tmp', 'waybar-performance.pid')
+LOCK_FILE = os.path.join(
+    os.environ.get('XDG_RUNTIME_DIR') or '/tmp', 'waybar-performance.lock')
+# What `pkill -f` matches to signal every running copy (and nothing else: the
+# `sh -c` wrapper waybar starts it through doesn't begin with python3).
+PROCESS_PATTERN = r'^python3 [^ ]*/custom-modules/performance\.py$'
 # A request tlp-pd hasn't confirmed within this long is assumed to have failed.
 PENDING_SECS = 5
 
@@ -116,11 +131,23 @@ class Monitor:
         except GLib.Error:
             self.proxy = None
         self.pending = None  # (profile, monotonic time requested)
+        self.lock = None     # open LOCK_FILE while this copy is the primary
+        self.try_become_primary()
         self.prev = cpu_times()
         self.stats = None
         self.warned = set()       # battery levels already notified this discharge
         self.auto_saver = False   # did *we* switch to power-saver?
         self.notify_id = 0        # dunst id, so warning -> critical replaces it
+
+    def try_become_primary(self):
+        if self.lock:
+            return
+        f = open(LOCK_FILE, 'w')
+        try:
+            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            self.lock = f  # held until this process exits
+        except OSError:
+            f.close()
 
     def actual_profile(self):
         value = self.proxy.get_cached_property('ActiveProfile') if self.proxy else None
@@ -133,8 +160,11 @@ class Monitor:
         return self.actual_profile()
 
     def set_profile(self, profile):
+        """Show `profile` now; only the primary copy actually requests it."""
         self.pending = (profile, time.monotonic())
         self.emit()
+        if not self.lock:
+            return
         self.proxy.call(
             'org.freedesktop.DBus.Properties.Set',
             GLib.Variant('(ssv)', (IFACE, 'ActiveProfile', GLib.Variant('s', profile))),
@@ -177,6 +207,8 @@ class Monitor:
         self.notify_id = 0
 
     def check_battery(self):
+        if not self.lock:
+            return  # only the primary copy notifies and switches
         state = battery()
         if state is None:
             return
@@ -245,6 +277,7 @@ class Monitor:
             os._exit(0)
 
     def tick(self):
+        self.try_become_primary()
         self.sample()
         self.check_battery()
         self.emit()
@@ -258,16 +291,13 @@ class Monitor:
 
 
 def send_cycle():
-    with open(PID_FILE) as f:
-        os.kill(int(f.read()), signal.SIGUSR1)
+    subprocess.run(['pkill', '-USR1', '-f', PROCESS_PATTERN], check=False)
 
 
 def main():
     if sys.argv[1:] == ['cycle']:
         send_cycle()
         return
-    with open(PID_FILE, 'w') as f:
-        f.write(str(os.getpid()))
     monitor = Monitor()
     GLib.unix_signal_add(GLib.PRIORITY_HIGH, signal.SIGUSR1, monitor.cycle)
     monitor.emit()  # profile icon right away; CPU needs one interval to measure
