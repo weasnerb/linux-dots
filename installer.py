@@ -105,7 +105,9 @@ def backup_config(config_path):
     """
     Check if config already exists, if so move to path.bak
     """
-    if config_path.exists():
+    # is_symlink() too: exists() is False for a broken symlink, which would then
+    # make symlink_to() fail with FileExistsError and abort the whole install.
+    if config_path.exists() or config_path.is_symlink():
         backup_path = get_backup_config_path(config_path)
         # Recursive check if path.bak already exists, if so move path.bak to path.bak.bak
         if backup_path.exists():
