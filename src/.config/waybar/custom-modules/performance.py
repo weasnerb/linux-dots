@@ -53,6 +53,10 @@ IFACE = 'org.freedesktop.UPower.PowerProfiles'
 
 LOCK_FILE = os.path.join(
     os.environ.get('XDG_RUNTIME_DIR') or '/tmp', 'waybar-performance.lock')
+# Battery-warning state, shared so a copy that takes over as primary (e.g. the
+# primary's monitor was unplugged) doesn't warn again or miss the restore.
+BATTERY_STATE_FILE = os.path.join(
+    os.environ.get('XDG_RUNTIME_DIR') or '/tmp', 'waybar-performance-battery.json')
 # What `pkill -f` matches to signal every running copy (and nothing else: the
 # `sh -c` wrapper waybar starts it through doesn't begin with python3).
 PROCESS_PATTERN = r'^python3 [^ ]*/custom-modules/performance\.py$'
@@ -88,7 +92,9 @@ def cpu_times():
                 break
             name, *values = line.split()
             fields = [int(x) for x in values]
-            times[name] = (fields[3] + fields[4], sum(fields))  # idle+iowait
+            # Fields 8-9 (guest, guest_nice) are already counted inside user
+            # and nice, so summing them too would understate usage under VMs.
+            times[name] = (fields[3] + fields[4], sum(fields[:8]))  # idle+iowait
     return times
 
 
@@ -148,6 +154,27 @@ class Monitor:
             self.lock = f  # held until this process exits
         except OSError:
             f.close()
+            return
+        self.load_battery_state()
+
+    def load_battery_state(self):
+        try:
+            with open(BATTERY_STATE_FILE) as f:
+                state = json.load(f)
+            self.warned = set(state.get('warned', []))
+            self.auto_saver = bool(state.get('auto_saver', False))
+        except (OSError, ValueError):
+            pass
+
+    def save_battery_state(self):
+        if not self.lock:
+            return
+        try:
+            with open(BATTERY_STATE_FILE, 'w') as f:
+                json.dump({'warned': sorted(self.warned),
+                           'auto_saver': self.auto_saver}, f)
+        except OSError:
+            pass
 
     def actual_profile(self):
         value = self.proxy.get_cached_property('ActiveProfile') if self.proxy else None
@@ -176,7 +203,9 @@ class Monitor:
         current = self.shown_profile()
         nxt = PROFILES[(PROFILES.index(current) + 1) % len(PROFILES)] \
             if current in PROFILES else 'balanced'
-        self.auto_saver = False  # a manual pick overrides the low-battery switch
+        if self.auto_saver:
+            self.auto_saver = False  # a manual pick overrides the low-battery switch
+            self.save_battery_state()
         self.set_profile(nxt)
         return GLib.SOURCE_CONTINUE
 
@@ -218,8 +247,13 @@ class Monitor:
             if self.warned:
                 self.warned.clear()
                 self.close_notification()
+                self.save_battery_state()
             if self.auto_saver:
                 self.auto_saver = False
+                self.save_battery_state()
+                # Intentionally performance, not the profile from before the
+                # switch: on AC the laptop should run at performance (TLP's
+                # AC default), and unplugging later returns to balanced.
                 if self.proxy and self.shown_profile() == 'power-saver':
                     self.set_profile('performance')
             return
@@ -237,6 +271,7 @@ class Monitor:
         if self.proxy and self.shown_profile() != 'power-saver':
             self.set_profile('power-saver')
             self.auto_saver = switched = True
+        self.save_battery_state()
         saver_note = 'Switched to power saver.' if switched else 'Power saver is on.'
 
         if level == 'critical':
