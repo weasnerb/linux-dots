@@ -8,8 +8,12 @@ control the player it is showing (`playerctl -p "$(cat ...)"` in the waybar
 config) rather than whatever playerctl would pick on its own. When a player closes,
 the module falls back to another running player instead of going blank.
 A player with no artist/title (e.g. a browser tab that registers MPRIS without
-track info) never takes over the display from one that has it.
+track info) never takes over the display from one that has it, and a player
+that isn't playing never takes over from one that is (e.g. a background video
+pausing while music plays). Track text is escaped, since waybar reads a custom
+module's output as Pango markup and a `&` or `<` would otherwise blank it.
 """
+import html
 import os
 import signal
 import sys
@@ -63,17 +67,29 @@ def track_info(player):
     return None
 
 
+def find_player(instance):
+    for p in manager.props.players:
+        if p.props.player_instance == instance:
+            return p
+    return None
+
+
 def show(player):
     """Show `player` if it has track info; otherwise leave the display alone,
     unless it was the player being shown, in which case fall back."""
+    instance = player.props.player_instance
     info = track_info(player)
     if info is None:
-        if player.props.player_instance == current:
+        if instance == current:
             show_fallback(exclude=player)
         return
-    set_current(player.props.player_instance)
+    if instance != current and player.props.status != 'Playing':
+        shown = find_player(current) if current else None
+        if shown is not None and shown.props.status == 'Playing':
+            return  # don't let a paused/stopped player steal the display
+    set_current(instance)
     icon = '󰏦' if player.props.status == 'Playing' else '󰐍'
-    write(f'{icon} {info}')
+    write(f'{icon} {html.escape(info, quote=False)}')
 
 
 def show_fallback(exclude=None):
