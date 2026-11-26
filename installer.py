@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import os
 from pathlib import Path
 
 USER_HOME_DIR=Path.home()
@@ -155,9 +156,17 @@ def install_config(src_config_path, installed_config_path):
 
 def is_config_installed(installed_config_path):
     """
-    Check to see if a config is installed
+    Check to see if a config is installed: a symlink to this config in this
+    repo, or in any copy of it. The second case covers links left dangling
+    after the repo moved, which exists() alone would miss (it is False for a
+    broken symlink), so they were never removed nor their .bak restored.
     """
-    return installed_config_path.exists() and installed_config_path.is_symlink()
+    if not installed_config_path.is_symlink():
+        return False
+    relative = installed_config_path.relative_to(USER_HOME_DIR)
+    target = Path(os.readlink(installed_config_path))
+    return (target == SRC_DIR.joinpath(relative)
+            or str(target).endswith(os.sep + str(Path('src') / relative)))
 
 def uninstall_config(installed_config_path):
     """
@@ -166,6 +175,27 @@ def uninstall_config(installed_config_path):
     if is_config_installed(installed_config_path):
         print(f"Deleting {str(installed_config_path)}")
         installed_config_path.unlink()
+        remove_empty_parents(installed_config_path)
+
+def remove_empty_parents(installed_config_path):
+    """
+    Per-file configs may have had parent directories created for them on
+    install (e.g. ~/.config/systemd/user/waybar.service.d/). Remove those if
+    now empty, but never the PER_FILE_DIRS directory or its direct children
+    (e.g. ~/.config/systemd/user), which systemd itself uses.
+    """
+    relative = installed_config_path.relative_to(USER_HOME_DIR)
+    for per_file_dir in PER_FILE_DIRS:
+        if per_file_dir not in relative.parents:
+            continue
+        keep_depth = len(per_file_dir.parts) + 1
+        parent = installed_config_path.parent
+        while len(parent.relative_to(USER_HOME_DIR).parts) > keep_depth:
+            try:
+                parent.rmdir()  # only succeeds if empty
+            except OSError:
+                break
+            parent = parent.parent
 
 def get_dot_configs_in_path(dir_to_search):
     """
