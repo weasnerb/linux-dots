@@ -101,16 +101,21 @@ def uninstall(args):
                 restore_backup_config(installed_config_path)
                 print("Done")
 
+def is_present(path):
+    """
+    True if anything is at path, including a broken symlink (Path.exists() is
+    False for those, so a dangling link would be overwritten or skipped).
+    """
+    return path.exists() or path.is_symlink()
+
 def backup_config(config_path):
     """
     Check if config already exists, if so move to path.bak
     """
-    # is_symlink() too: exists() is False for a broken symlink, which would then
-    # make symlink_to() fail with FileExistsError and abort the whole install.
-    if config_path.exists() or config_path.is_symlink():
+    if is_present(config_path):
         backup_path = get_backup_config_path(config_path)
         # Recursive check if path.bak already exists, if so move path.bak to path.bak.bak
-        if backup_path.exists():
+        if is_present(backup_path):
             backup_config(backup_path)
         print(f"Backing up {str(config_path)} to {str(backup_path)}")
         config_path.rename(backup_path)
@@ -119,15 +124,15 @@ def restore_backup_config(config_path):
     """
     Restores a config from path.bak to path
     """
-    if config_path.exists():
+    if is_present(config_path):
         print(f"Cannot Restore Backup for {str(config_path)} because {str(config_path)} currently exists.")
         return
     backup_path = get_backup_config_path(config_path)
-    if backup_path.exists():
+    if is_present(backup_path):
         print(f"Restoring backup from {str(backup_path)} to {str(config_path)}")
         backup_path.rename(config_path)
         # Recursive check if path.bak.bak exists, if so move path.bak.bak to path.bak
-        if get_backup_config_path(backup_path).exists():
+        if is_present(get_backup_config_path(backup_path)):
             restore_backup_config(backup_path)
         
 def get_backup_config_path(config_path):
