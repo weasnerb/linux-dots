@@ -35,4 +35,7 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"))
 --
 -- Keyboard Backlighting
 --
-hl.bind("XF86WakeUp + space", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/keyboard_backlight.py"))
+-- No bind needed: Fn+Space is handled by the ThinkPad's firmware (verified
+-- 2026-11-26 with the bind removed). The old "XF86WakeUp + space" bind never
+-- worked as intended anyway: XF86WakeUp (the Fn key) isn't a modifier, so the
+-- Lua loader dropped it and registered a bind on plain `space`.
