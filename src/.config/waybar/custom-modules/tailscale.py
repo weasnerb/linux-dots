@@ -247,7 +247,12 @@ def render():
         if status.get('Health'):
             css_class = 'warning'
         headline = 'Connected As: %s' % hostname(status.get('Self') or {})
-        module = {'text': KEY,
+        # Normally just the key; while routing through an exit node (always
+        # another device: a node can't be its own exit node), name it in the bar.
+        text = KEY
+        if exit_node is not None:
+            text = '%s %s' % (KEY, escape(hostname(exit_node)))
+        module = {'text': text,
                   'tooltip': build_tooltip(status, dns_info, exit_node, headline),
                   'class': css_class}
     elif backend_state == 'Stopped':
