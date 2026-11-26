@@ -63,8 +63,12 @@ def install(args):
     else:
         for src_config_path in configs:
             config_path_relative_to_src = src_config_path.relative_to(SRC_DIR)
+            installed_config_path = USER_HOME_DIR.joinpath(config_path_relative_to_src)
+            # Already linked to this repo (e.g. a second run): nothing to do.
+            # Backing it up would just pile up .bak links to the same file.
+            if installed_config_path.is_symlink() and installed_config_path.resolve() == src_config_path.resolve():
+                continue
             if args['all'] or prompt_y_n(f"Install {config_path_relative_to_src}?"):
-                installed_config_path = USER_HOME_DIR.joinpath(config_path_relative_to_src)
                 backup_config(installed_config_path)
                 install_config(src_config_path, installed_config_path)
                 print("Done")
