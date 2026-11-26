@@ -81,6 +81,17 @@ export PATH="$HOME/.local/bin:$PATH"
 # Consequence: powerlevel10k's `nvm` prompt segment needs nvm's shell functions
 # to report a version, so it stays hidden until nvm loads in that shell.
 export NVM_DIR="$HOME/.nvm"
+# The stubs below only work when typed at the prompt; programs that run `node`
+# themselves (#!/usr/bin/env node scripts, global npm CLIs, editors, build
+# tools) need a real node on PATH. If nothing provides one yet (a login shell's
+# ~/.zprofile may already have loaded nvm), add the newest installed version's
+# bin directory. It's a glob, not nvm, so startup stays fast; once nvm loads it
+# switches PATH to the configured default.
+if (( ! $+commands[node] )); then
+    _nvm_bins=( $NVM_DIR/versions/node/*/bin(N/nOn) )
+    (( $#_nvm_bins )) && path=( $_nvm_bins[1] $path )
+    unset _nvm_bins
+fi
 _load_nvm() {
     unset -f nvm node npm npx corepack 2>/dev/null
     source /usr/share/nvm/init-nvm.sh
