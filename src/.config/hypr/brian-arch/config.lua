@@ -29,10 +29,10 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 --
 -- Screen Brightness
 --
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("light -A 5"))
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("light -U 5"))
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl set +5%"))
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"))
 
 --
 -- Keyboard Backlighting
 --
-hl.bind("XF86WakeUp + space", hl.dsp.exec_cmd("$HOME/.config/sway/custom-scripts/keyboard_backlight.py"))
+hl.bind("XF86WakeUp + space", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/keyboard_backlight.py"))

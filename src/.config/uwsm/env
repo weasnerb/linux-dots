@@ -1,0 +1,16 @@
+#!/bin/sh
+# Environment for the uwsm-managed graphical session.
+#
+# uwsm's environment preloader sources POSIX sh profile only (/etc/profile and
+# ~/.profile). We have no ~/.profile, and our PATH additions live in ~/.zprofile,
+# which sh never reads -- so mirror them here or GUI apps lose them.
+#
+# EDITOR/VISUAL/_JAVA_AWT_WM_NONREPARENTING come from /etc/profile.d/zz-local.sh
+# and do not need repeating.
+
+# ~/.local/bin: pipx and pip --user installs
+# JetBrains Toolbox: the `idea`, `pycharm`, ... launcher scripts
+export PATH="$HOME/.local/bin:$PATH:$HOME/.local/share/JetBrains/Toolbox/scripts"
+
+# Note: nvm is deliberately NOT loaded here. nvm.sh needs bash, and GUI apps
+# that need node (e.g. VS Code) resolve it by running a login shell themselves.

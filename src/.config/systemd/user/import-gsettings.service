@@ -1,0 +1,14 @@
+[Unit]
+Description=Import GTK settings.ini values into gsettings
+Documentation=https://wiki.hypr.land/Configuring/Uncommon-tips-and-tricks/
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=%h/.config/hypr/scripts/import-gsettings.sh
+Slice=background-graphical.slice
+
+[Install]
+WantedBy=graphical-session.target
