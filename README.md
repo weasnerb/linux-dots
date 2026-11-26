@@ -33,7 +33,11 @@ Then, on each machine:
    ```bash
    systemctl --user enable import-gsettings.service polkit-gnome-authentication-agent-1.service waybar.service hyprpaper.service
    ```
-4. **Log in with the "Hyprland (uwsm-managed)" session in ly.** The plain "Hyprland" session also works: `hyprland.lua` then starts waybar, hyprpaper and the polkit agent itself.
+4. **Laptops: make TLP always switch profiles with the charger.** Plugging in should go to performance and unplugging to balanced, with a profile picked from the bar holding until the next plug/unplug. That's TLP's "auto" mode; its default "smart" mode skips the switch after a manual pick. `/etc/tlp.conf` isn't in this repo, so set it by hand:
+   ```bash
+   sudo sed -i 's/^#\?TLP_AUTO_SWITCH=.*/TLP_AUTO_SWITCH=1/' /etc/tlp.conf && sudo tlp start
+   ```
+5. **Log in with the "Hyprland (uwsm-managed)" session in ly.** The plain "Hyprland" session also works: `hyprland.lua` then starts waybar, hyprpaper and the polkit agent itself.
 
 To restart the bar after editing it, use `systemctl --user restart waybar` (or `reload` for style/config-only changes). Don't kill it and relaunch it by hand: the service brings back its own copy too, and you end up with two bars.
 
@@ -60,7 +64,7 @@ This removes the symlinks the installer made and restores any `.bak` backups.
 
 ### Waybar modules
 
-- **Performance** (`custom-modules/performance.py`): the icon shows the power profile and turns red when CPU or RAM is at 80% or more. Hover for per-core CPU and RAM use. Left-click cycles power-saver → balanced → performance; right-click opens htop. On battery it warns at 15% and 5% and switches to power saver; plugging in switches to performance.
+- **Performance** (`custom-modules/performance.py`): the icon shows the power profile and turns red when CPU or RAM is at 80% or more. Hover for per-core CPU and RAM use. Left-click cycles power-saver → balanced → performance; right-click opens htop. On battery it warns at 15% and 5% and switches to power saver. Plugging in switches to performance (TLP does this with `TLP_AUTO_SWITCH=1`, see Install step 4; the module also undoes its own low-battery switch).
 - **Media** (`custom-modules/media.py`): now playing for any MPRIS player. Click to play/pause, right-click for the next track.
 - **Tailscale** (`custom-modules/tailscale.py`): connection status. Click to toggle, right-click for a menu, middle-click to copy this machine's Tailscale IP.
 - Built-in modules: workspaces, window title, network (click opens `nmtui`), volume and mic (percentage on hover), battery, tray, and a combined date/time clock (click for the long form, hover for a calendar).
