@@ -76,6 +76,6 @@ Arch package names. Packages marked *(AUR)* are not in the official repos.
 - **Audio:** `wireplumber` (`wpctl`), `pulsemixer`, `libpulse` (`pactl`)
 - **Utilities:** `brightnessctl`, `grim` and `jq` (screenshots), `wl-clipboard`, `imagemagick` (`makemywall.sh`)
 - **Colors:** `python-pywal` *(AUR)*
-- **Fonts:** `ttf-material-design-icons-webfont` *(AUR; bar and popup icons)*, `ttf-roboto` (bar text), `ttf-meslo-nerd-font-powerlevel10k` *(AUR; terminal)*, `adobe-source-code-pro-fonts` (launcher)
+- **Fonts:** `ttf-material-design-icons-webfont` *(AUR; bar and popup icons)*, `ttf-meslo-nerd-font-powerlevel10k` *(AUR; terminal and bar text)*, `adobe-source-code-pro-fonts` (launcher)
 - **Terminal and shell:** `alacritty`, `zsh`, `zsh-theme-powerlevel10k`, `zsh-syntax-highlighting`, `zsh-autosuggestions`, `zsh-history-substring-search`, `nvm`
 - **Editor:** `neovim`

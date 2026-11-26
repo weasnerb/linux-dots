@@ -4,11 +4,13 @@
     border: none;
     border-radius: 0;
     color: @foreground;
-    /* Material Design Icons right after Roboto so every 󰀀-style glyph comes
-       from the real MDI font. Left to fallback they came from MesloLGS NF,
-       whose Nerd Font patcher scales each icon to fill its cell, so narrow
-       ones (e.g. the 1-wave low-volume speaker) render larger than the rest. */
-    font-family: Roboto, "Material Design Icons", Helvetica, Arial, sans-serif;
+    /* Material Design Icons FIRST: it contains only icons (U+F0001-F1D17), no
+       letters, digits or spaces, so it supplies every 󰀀-style glyph and all
+       text falls through to MesloLGS NF. The order matters: Meslo is a Nerd
+       Font that also has these icons, but its patcher scales each one to fill
+       its cell, so narrow ones (e.g. the 1-wave low-volume speaker) render
+       larger than the rest if Meslo is allowed to supply them. */
+    font-family: "Material Design Icons", "MesloLGS NF", monospace;
     font-size: .85rem;
     min-height: 0;
 }

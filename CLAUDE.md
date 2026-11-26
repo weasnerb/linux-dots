@@ -43,7 +43,7 @@ The legacy hyprlang `.conf` files were removed; config is now Lua (`hl.*` API).
 - `performance.py`: long-running GLib loop. Icon is the tlp-pd power profile (PPD D-Bus API); turns red at 80%+ CPU or RAM; tooltip has per-core CPU and RAM. Waybar runs one copy per monitor: left-click `pkill -USR1`s all of them (the pattern in `config` must match `PROCESS_PATTERN`), every copy updates its icon at once, and only the copy holding `$XDG_RUNTIME_DIR/waybar-performance.lock` (flock) switches the profile and handles low-battery notifications. Battery thresholds `BATTERY_WARNING`/`BATTERY_CRITICAL` must match the battery module's `states` in `config`. Exceptions inside GLib callbacks are only logged, so it exits explicitly on a broken pipe to avoid orphans.
 - `media.py`: any MPRIS player; shows the most recently active one and records its instance name in `$XDG_RUNTIME_DIR/waybar-media-player` so the click actions (`playerctl -p`) control that same player. Falls back to another player when one closes.
 - `tailscale.py` (+ `tailscale-menu.xml` for the right-click menu).
-- Glyphs are Material Design Icons. `style.css` lists `"Material Design Icons"` right after Roboto so they don't fall back to MesloLGS NF, whose Nerd Font scaling renders narrow icons oversized.
+- Glyphs are Material Design Icons. `style.css` lists `"Material Design Icons"` **first**, then `"MesloLGS NF"` for text. MDI has no letters, digits or spaces, so text falls through to Meslo; but Meslo (a Nerd Font) also has the MDI icons, and its scaling renders narrow ones oversized, so it must never come first.
 - `waybar/.gitignore` ignores `__pycache__/` and `*.bak-*` backups.
 
 ## Other configs
