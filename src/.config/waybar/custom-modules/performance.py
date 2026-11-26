@@ -163,6 +163,7 @@ class Monitor:
                 state = json.load(f)
             self.warned = set(state.get('warned', []))
             self.auto_saver = bool(state.get('auto_saver', False))
+            self.notify_id = int(state.get('notify_id', 0))
         except (OSError, ValueError):
             pass
 
@@ -171,8 +172,11 @@ class Monitor:
             return
         try:
             with open(BATTERY_STATE_FILE, 'w') as f:
+                # notify_id too, so a copy that takes over can still close or
+                # replace the popup the previous primary showed.
                 json.dump({'warned': sorted(self.warned),
-                           'auto_saver': self.auto_saver}, f)
+                           'auto_saver': self.auto_saver,
+                           'notify_id': self.notify_id}, f)
         except OSError:
             pass
 
@@ -271,7 +275,6 @@ class Monitor:
         if self.proxy and self.shown_profile() != 'power-saver':
             self.set_profile('power-saver')
             self.auto_saver = switched = True
-        self.save_battery_state()
         saver_note = 'Switched to power saver.' if switched else 'Power saver is on.'
 
         if level == 'critical':
@@ -280,6 +283,8 @@ class Monitor:
                         + ('' if not switched else f' {saver_note}'))
         else:
             self.notify('Battery low', f'{capacity}% left. {saver_note}')
+        # After notifying, so the new notify_id is saved with the rest.
+        self.save_battery_state()
 
     def sample(self):
         cur = cpu_times()
