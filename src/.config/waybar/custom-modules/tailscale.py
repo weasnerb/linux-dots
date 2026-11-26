@@ -306,7 +306,9 @@ def run_action(args, timeout=30):
 
 def login():
     # `tailscale up` prints an auth URL and blocks, so it needs a visible terminal.
-    subprocess.Popen(['alacritty', '-e', 'tailscale', 'up'])
+    # uwsm app: otherwise the terminal is a child of waybar.service and a waybar
+    # restart would kill it mid-login.
+    subprocess.Popen(['uwsm', 'app', '--', 'alacritty', '-e', 'tailscale', 'up'])
 
 
 def toggle():
