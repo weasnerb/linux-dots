@@ -160,7 +160,7 @@
 	"format-source": "󰍬",
 	"format-source-muted": "󰍭",
 	"tooltip-format": "Mic: {format_source}",
-        "on-click": "pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
     },
     "bluetooth": {
         "format": "{status} 󰂯",

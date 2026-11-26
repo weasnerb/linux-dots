@@ -73,7 +73,7 @@ Arch package names. Packages marked *(AUR)* are not in the official repos.
 - **Bar:** `waybar`, `python-gobject`, `playerctl`, `htop`, `networkmanager` (for `nmtui`), `tailscale` (optional)
 - **Power profiles:** `tlp` and `tlp-pd` (or anything else providing the power-profiles-daemon D-Bus API)
 - **Launcher, notifications, lock:** `fuzzel`, `dunst`, `libnotify`, `swaylock-effects` *(AUR)*
-- **Audio:** `wireplumber` (`wpctl`), `pulsemixer`, `libpulse` (`pactl`)
+- **Audio:** `pipewire`, `pipewire-pulse` (PulseAudio compatibility for apps and pulsemixer), `wireplumber` (`wpctl`), `pulsemixer`
 - **Utilities:** `brightnessctl`, `grim`, `slurp` and `jq` (screenshots), `wl-clipboard`, `imagemagick` (`makemywall.sh`)
 - **Colors:** `python-pywal` *(AUR)*
 - **Fonts:** `ttf-material-design-icons-webfont` *(AUR; bar and popup icons)*, `ttf-meslo-nerd-font-powerlevel10k` *(AUR; terminal and bar text)*, `adobe-source-code-pro-fonts` (launcher)
