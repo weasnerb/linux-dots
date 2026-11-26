@@ -169,6 +169,13 @@ def mark_expected():
         pass
 
 
+def clear_expected():
+    try:
+        os.remove(expected_file())
+    except OSError:
+        pass
+
+
 def take_expected():
     """True if this module requested a change in the last EXPECTED_SECS."""
     try:
@@ -271,9 +278,18 @@ def refresh_bar():
 
 
 def run_action(args, timeout=30):
+    # Mark up/down as expected only if it will actually change the state: a
+    # leftover marker would make the next *unexpected* drop look intentional.
+    marked = False
     if args[0] in ('up', 'down'):
-        mark_expected()
+        status = get_tailscale_status()
+        current = status.get('BackendState') if status else None
+        if (args[0] == 'down') == (current == 'Running'):
+            mark_expected()
+            marked = True
     completed_process = tailscale(args, timeout=timeout)
+    if marked and (completed_process is None or completed_process.returncode != 0):
+        clear_expected()
     if completed_process is None:
         notify('Tailscale did not respond', 'tailscale %s timed out'
                % ' '.join(args), urgency='critical')
@@ -298,6 +314,8 @@ def login():
 def toggle():
     status = get_tailscale_status()
     if status is None:
+        notify('Tailscale status unavailable',
+               'tailscaled did not answer; is it running?')
         return
     backend_state = status.get('BackendState')
     if backend_state == 'Running':
@@ -306,6 +324,9 @@ def toggle():
         run_action(['up'])
     elif backend_state in ('NeedsLogin', 'NeedsMachineAuth'):
         login()
+    else:
+        notify('Tailscale is %s' % (backend_state or 'in an unknown state'),
+               'Try again in a moment.')
 
 
 def main():
