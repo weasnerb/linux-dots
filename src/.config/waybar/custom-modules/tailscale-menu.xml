@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Right-click menu for the custom/tailscale waybar module.
+     Waybar requires a GtkMenu with id="menu"; each item id is matched by
+     "menu-actions" in ~/.config/waybar/config. Labels are static, so the
+     connect/disconnect and DNS pairs are deliberate one-way actions rather
+     than toggles that could claim the wrong thing. -->
+<interface>
+  <object class="GtkMenu" id="menu">
+    <child>
+      <object class="GtkMenuItem" id="connect">
+        <property name="visible">True</property>
+        <property name="label">Connect</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="disconnect">
+        <property name="visible">True</property>
+        <property name="label">Disconnect</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="sep1">
+        <property name="visible">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="dns-on">
+        <property name="visible">True</property>
+        <property name="label">Accept DNS: on</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="dns-off">
+        <property name="visible">True</property>
+        <property name="label">Accept DNS: off</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="sep2">
+        <property name="visible">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="copy-ip">
+        <property name="visible">True</property>
+        <property name="label">Copy Tailscale IP</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="admin">
+        <property name="visible">True</property>
+        <property name="label">Admin console</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="status">
+        <property name="visible">True</property>
+        <property name="label">Status in terminal</property>
+      </object>
+    </child>
+  </object>
+</interface>

@@ -1,10 +1,17 @@
 #!/usr/bin/env python
 
 import argparse
+import os
 from pathlib import Path
 
 USER_HOME_DIR=Path.home()
 SRC_DIR=Path.cwd().joinpath('src')
+
+# Directories whose files are linked one by one instead of linking the whole
+# directory. ~/.config/systemd/user also holds systemd's own enablement links
+# (*.wants/), so it must stay a real directory: replacing it with a symlink to
+# the repo would back it up out of the way and silently disable every user unit.
+PER_FILE_DIRS = {Path('.config/systemd')}
 
 def main():
     """
@@ -57,8 +64,12 @@ def install(args):
     else:
         for src_config_path in configs:
             config_path_relative_to_src = src_config_path.relative_to(SRC_DIR)
+            installed_config_path = USER_HOME_DIR.joinpath(config_path_relative_to_src)
+            # Already linked to this repo (e.g. a second run): nothing to do.
+            # Backing it up would just pile up .bak links to the same file.
+            if installed_config_path.is_symlink() and installed_config_path.resolve() == src_config_path.resolve():
+                continue
             if args['all'] or prompt_y_n(f"Install {config_path_relative_to_src}?"):
-                installed_config_path = USER_HOME_DIR.joinpath(config_path_relative_to_src)
                 backup_config(installed_config_path)
                 install_config(src_config_path, installed_config_path)
                 print("Done")
@@ -91,14 +102,21 @@ def uninstall(args):
                 restore_backup_config(installed_config_path)
                 print("Done")
 
+def is_present(path):
+    """
+    True if anything is at path, including a broken symlink (Path.exists() is
+    False for those, so a dangling link would be overwritten or skipped).
+    """
+    return path.exists() or path.is_symlink()
+
 def backup_config(config_path):
     """
     Check if config already exists, if so move to path.bak
     """
-    if config_path.exists():
+    if is_present(config_path):
         backup_path = get_backup_config_path(config_path)
         # Recursive check if path.bak already exists, if so move path.bak to path.bak.bak
-        if backup_path.exists():
+        if is_present(backup_path):
             backup_config(backup_path)
         print(f"Backing up {str(config_path)} to {str(backup_path)}")
         config_path.rename(backup_path)
@@ -107,15 +125,15 @@ def restore_backup_config(config_path):
     """
     Restores a config from path.bak to path
     """
-    if config_path.exists():
+    if is_present(config_path):
         print(f"Cannot Restore Backup for {str(config_path)} because {str(config_path)} currently exists.")
         return
     backup_path = get_backup_config_path(config_path)
-    if backup_path.exists():
+    if is_present(backup_path):
         print(f"Restoring backup from {str(backup_path)} to {str(config_path)}")
         backup_path.rename(config_path)
         # Recursive check if path.bak.bak exists, if so move path.bak.bak to path.bak
-        if get_backup_config_path(backup_path).exists():
+        if is_present(get_backup_config_path(backup_path)):
             restore_backup_config(backup_path)
         
 def get_backup_config_path(config_path):
@@ -131,13 +149,24 @@ def install_config(src_config_path, installed_config_path):
     Symbolically link the dot config from src_config_path to the installed_config_path
     """
     print(f"Installing {str(src_config_path.relative_to(SRC_DIR))}")
+    # Per-file configs (see PER_FILE_DIRS) can sit in directories that don't
+    # exist yet, e.g. ~/.config/systemd/user/waybar.service.d/.
+    installed_config_path.parent.mkdir(parents=True, exist_ok=True)
     installed_config_path.symlink_to(src_config_path)
 
 def is_config_installed(installed_config_path):
     """
-    Check to see if a config is installed
+    Check to see if a config is installed: a symlink to this config in this
+    repo, or in any copy of it. The second case covers links left dangling
+    after the repo moved, which exists() alone would miss (it is False for a
+    broken symlink), so they were never removed nor their .bak restored.
     """
-    return installed_config_path.exists() and installed_config_path.is_symlink()
+    if not installed_config_path.is_symlink():
+        return False
+    relative = installed_config_path.relative_to(USER_HOME_DIR)
+    target = Path(os.readlink(installed_config_path))
+    return (target == SRC_DIR.joinpath(relative)
+            or str(target).endswith(os.sep + str(Path('src') / relative)))
 
 def uninstall_config(installed_config_path):
     """
@@ -146,6 +175,27 @@ def uninstall_config(installed_config_path):
     if is_config_installed(installed_config_path):
         print(f"Deleting {str(installed_config_path)}")
         installed_config_path.unlink()
+        remove_empty_parents(installed_config_path)
+
+def remove_empty_parents(installed_config_path):
+    """
+    Per-file configs may have had parent directories created for them on
+    install (e.g. ~/.config/systemd/user/waybar.service.d/). Remove those if
+    now empty, but never the PER_FILE_DIRS directory or its direct children
+    (e.g. ~/.config/systemd/user), which systemd itself uses.
+    """
+    relative = installed_config_path.relative_to(USER_HOME_DIR)
+    for per_file_dir in PER_FILE_DIRS:
+        if per_file_dir not in relative.parents:
+            continue
+        keep_depth = len(per_file_dir.parts) + 1
+        parent = installed_config_path.parent
+        while len(parent.relative_to(USER_HOME_DIR).parts) > keep_depth:
+            try:
+                parent.rmdir()  # only succeeds if empty
+            except OSError:
+                break
+            parent = parent.parent
 
 def get_dot_configs_in_path(dir_to_search):
     """
@@ -155,7 +205,9 @@ def get_dot_configs_in_path(dir_to_search):
 
     dirs = dir_to_search.iterdir()
     for dir in dirs:
-        if is_dot_file(dir):
+        if dir.relative_to(SRC_DIR) in PER_FILE_DIRS:
+            dot_configs_in_path.extend(sorted(p for p in dir.rglob('*') if p.is_file()))
+        elif is_dot_file(dir):
             dot_configs_in_path.append(dir)
         elif dir.is_dir():
             dot_configs_in_path.extend(get_dot_configs_in_path(dir))
