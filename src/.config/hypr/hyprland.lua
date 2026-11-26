@@ -166,7 +166,9 @@ hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(menu))
 -- Use Alt + L for lock, instead of Mod + L due to Mod + L being used for focus movement.
 hl.bind(alt .. " + L", hl.dsp.exec_cmd(lockscreen))
 
-hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.kill())
+-- window.close() asks the app to close (it can still prompt to save), like the
+-- old `killactive`. window.kill() would terminate it outright.
+hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
 -- Exit the same way as the power menu's Logout: under uwsm, stop the session
 -- properly (so graphical-session.target and its units shut down in order);
 -- otherwise exit Hyprland directly.
