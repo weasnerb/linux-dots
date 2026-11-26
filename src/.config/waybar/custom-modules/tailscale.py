@@ -203,7 +203,15 @@ def notify_on_change(backend_state):
             lock.close()
 
 
+# Only these states are tracked. Transitional ones (e.g. Starting while Wi-Fi
+# roams) are ignored entirely, so Running -> Starting -> Running doesn't look
+# like a fresh connection or use up the "expected" marker.
+NOTIFY_STATES = ('Running', 'Stopped', 'NeedsLogin', 'NeedsMachineAuth')
+
+
 def _notify_on_change(backend_state):
+    if backend_state not in NOTIFY_STATES:
+        return
     path = state_file()
     previous = None
     try:
@@ -336,7 +344,13 @@ def main():
     elif args[0] == 'toggle':
         toggle()
     elif args[0] == 'up':
-        run_action(['up'])
+        # Logged out, `tailscale up` would block waiting for a login and time
+        # out; open the login flow instead, as the left-click toggle does.
+        status = get_tailscale_status()
+        if status and status.get('BackendState') in ('NeedsLogin', 'NeedsMachineAuth'):
+            login()
+        else:
+            run_action(['up'])
     elif args[0] == 'down':
         run_action(['down'])
     elif args[0] == 'dns' and len(args) > 1:
