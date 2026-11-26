@@ -137,13 +137,15 @@ class Monitor:
         except GLib.Error:
             self.proxy = None
         self.pending = None  # (profile, monotonic time requested)
-        self.lock = None     # open LOCK_FILE while this copy is the primary
-        self.try_become_primary()
         self.prev = cpu_times()
         self.stats = None
+        # Defaults first: try_become_primary() loads the shared battery state
+        # over these, so it must run after them, not before.
         self.warned = set()       # battery levels already notified this discharge
         self.auto_saver = False   # did *we* switch to power-saver?
         self.notify_id = 0        # dunst id, so warning -> critical replaces it
+        self.lock = None     # open LOCK_FILE while this copy is the primary
+        self.try_become_primary()
 
     def try_become_primary(self):
         if self.lock:
