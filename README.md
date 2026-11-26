@@ -25,7 +25,7 @@ Then, on each machine:
    ```bash
    cd ~/.config/hypr && ln -s ./brian-arch ./current-computer   # or ./brian-desktop-arch
    ```
-2. **Generate the color scheme.** Hyprland won't load without `~/.cache/wal/colors-hypr.lua`:
+2. **Generate the color scheme** (`~/.cache/wal/colors-hypr.lua`). Without it Hyprland still starts, but with fallback colors and a warning:
    ```bash
    wal -i <wallpaper>   # first time; afterwards `wal -R` restores the last one
    ```
@@ -74,7 +74,7 @@ Arch package names. Packages marked *(AUR)* are not in the official repos.
 - **Power profiles:** `tlp` and `tlp-pd` (or anything else providing the power-profiles-daemon D-Bus API)
 - **Launcher, notifications, lock:** `fuzzel`, `dunst`, `libnotify`, `swaylock-effects` *(AUR)*
 - **Audio:** `wireplumber` (`wpctl`), `pulsemixer`, `libpulse` (`pactl`)
-- **Utilities:** `brightnessctl`, `grim` and `jq` (screenshots), `wl-clipboard`, `imagemagick` (`makemywall.sh`)
+- **Utilities:** `brightnessctl`, `grim`, `slurp` and `jq` (screenshots), `wl-clipboard`, `imagemagick` (`makemywall.sh`)
 - **Colors:** `python-pywal` *(AUR)*
 - **Fonts:** `ttf-material-design-icons-webfont` *(AUR; bar and popup icons)*, `ttf-meslo-nerd-font-powerlevel10k` *(AUR; terminal and bar text)*, `adobe-source-code-pro-fonts` (launcher)
 - **Terminal and shell:** `alacritty`, `zsh`, `zsh-theme-powerlevel10k`, `zsh-syntax-highlighting`, `zsh-autosuggestions`, `zsh-history-substring-search`, `nvm`
