@@ -7,14 +7,10 @@ import time
 import fcntl
 import subprocess
 
-# key-variant. MDI has no key-off glyph, so the disconnected states strike this
-# through with pango markup instead. The diagonal key crosses cleanly; the plain
-# horizontal `key` glyph would swallow the line into its own shaft.
-KEY = '\U000F030B'
-ARROW = '\U000F0054'  # mdi arrow-right
+KEY = '\U000F0306'          # mdi key: connected
+KEY_REMOVE = '\U000F030A'   # mdi key-remove: disconnected / logged out
 
 WAYBAR_SIGNAL = 'RTMIN+8'
-MAX_NAME = 20
 
 # Waybar hides a custom module when its text is empty.
 HIDDEN = {'text': ''}
@@ -78,24 +74,15 @@ def hostname(node):
     return node.get('HostName') or (node.get('DNSName') or '').split('.')[0]
 
 
-def shorten(name):
-    if len(name) <= MAX_NAME:
-        return name
-    return name[:MAX_NAME - 1] + '…'
-
-
 def escape(text):
     return html.escape(str(text), quote=False)
 
 
-def struck(icon):
-    return '<span strikethrough="true">%s</span>' % icon
-
-
-def build_tooltip(status, dns_info, exit_node):
+def build_tooltip(status, dns_info, exit_node, headline):
     self_node = status.get('Self') or {}
     tailnet = status.get('CurrentTailnet') or {}
-    lines = []
+    # The bar shows only the icon, so the connection state leads the tooltip.
+    lines = ['<b>%s</b>' % escape(headline), '']
 
     if tailnet.get('Name'):
         lines.append('<b>%s</b>' % escape(tailnet.get('Name')))
@@ -254,24 +241,22 @@ def render():
     if backend_state == 'Running':
         exit_node = get_exit_node(status)
         dns_info = get_dns_info(status)
-        text = escape(shorten(hostname(status.get('Self') or {})))
         css_class = 'connected'
         if exit_node is not None:
-            text = '%s %s %s' % (text, ARROW,
-                                 escape(shorten(hostname(exit_node))))
             css_class = 'exit-node'
         if status.get('Health'):
             css_class = 'warning'
-        module = {'text': '%s %s' % (KEY, text),
-                  'tooltip': build_tooltip(status, dns_info, exit_node),
+        headline = 'Connected As: %s' % hostname(status.get('Self') or {})
+        module = {'text': KEY,
+                  'tooltip': build_tooltip(status, dns_info, exit_node, headline),
                   'class': css_class}
     elif backend_state == 'Stopped':
-        module = {'text': '%s Disconnected' % struck(KEY),
-                  'tooltip': build_tooltip(status, None, None),
+        module = {'text': KEY_REMOVE,
+                  'tooltip': build_tooltip(status, None, None, 'Disconnected'),
                   'class': 'disconnected'}
     elif backend_state in ('NeedsLogin', 'NeedsMachineAuth'):
-        module = {'text': '%s Logged out' % struck(KEY),
-                  'tooltip': 'Not logged in to a tailnet\nClick to authenticate',
+        module = {'text': KEY_REMOVE,
+                  'tooltip': '<b>Logged out</b>\n\nNot logged in to a tailnet\nClick to authenticate',
                   'class': 'logged-out'}
     else:
         module = HIDDEN
