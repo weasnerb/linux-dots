@@ -24,7 +24,7 @@ Hyprland runs under uwsm, so autostart is systemd user units wanted by `graphica
 - `uwsm/env` is the session environment. uwsm only sources POSIX sh profiles, so PATH additions from `.zprofile` are mirrored there.
 - **Restart waybar with `systemctl --user restart waybar`** (config-only changes: `systemctl --user reload waybar`). Killing and relaunching it by hand makes the service respawn a second bar and orphans the custom-module scripts.
 
-## Hyprland (branch `hyprland-lua-migration`)
+## Hyprland
 
 The legacy hyprlang `.conf` files were removed; config is now Lua (`hl.*` API).
 
