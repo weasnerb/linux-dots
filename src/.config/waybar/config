@@ -185,8 +185,9 @@
         "exec-if": "command -v playerctl",
         // Control the player the module is showing (media.py records it),
         // not whichever player playerctl would pick by itself.
-        "on-click": "playerctl -p \"$(cat $XDG_RUNTIME_DIR/waybar-media-player)\" play-pause",
-        "on-click-right": "playerctl -p \"$(cat $XDG_RUNTIME_DIR/waybar-media-player)\" next"
+        // If nothing is showing there is no file and the click does nothing.
+        "on-click": "p=$(cat $XDG_RUNTIME_DIR/waybar-media-player 2>/dev/null) && playerctl -p \"$p\" play-pause",
+        "on-click-right": "p=$(cat $XDG_RUNTIME_DIR/waybar-media-player 2>/dev/null) && playerctl -p \"$p\" next"
     },
     "custom/tailscale": {
         "format": "{}",

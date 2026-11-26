@@ -3,6 +3,8 @@ import os
 import sys
 import json
 import html
+import time
+import fcntl
 import subprocess
 
 # key-variant. MDI has no key-off glyph, so the disconnected states strike this
@@ -149,7 +151,52 @@ def notify(summary, body='', urgency='normal'):
         pass
 
 
+# A connect/disconnect started from this module (click or menu) is recorded
+# here, so the resulting transition is announced as a normal notification
+# rather than as an unexpected, persistent critical one.
+EXPECTED_SECS = 60
+
+
+def expected_file():
+    return state_file() + '.expected'
+
+
+def mark_expected():
+    try:
+        with open(expected_file(), 'w') as handle:
+            handle.write(str(time.time()))
+    except OSError:
+        pass
+
+
+def take_expected():
+    """True if this module requested a change in the last EXPECTED_SECS."""
+    try:
+        with open(expected_file()) as handle:
+            requested = float(handle.read())
+        os.remove(expected_file())
+    except (OSError, ValueError):
+        return False
+    return time.time() - requested < EXPECTED_SECS
+
+
 def notify_on_change(backend_state):
+    # Waybar runs one copy of this module per bar (per monitor), and a refresh
+    # signal reaches them all at once. The lock makes the read-compare-write
+    # atomic, so only the first copy sees the transition and notifies.
+    try:
+        lock = open(state_file() + '.lock', 'w')
+        fcntl.flock(lock, fcntl.LOCK_EX)
+    except OSError:
+        lock = None
+    try:
+        _notify_on_change(backend_state)
+    finally:
+        if lock:
+            lock.close()
+
+
+def _notify_on_change(backend_state):
     path = state_file()
     previous = None
     try:
@@ -168,10 +215,12 @@ def notify_on_change(backend_state):
     if previous is None or previous == backend_state:
         return
 
+    requested = take_expected()
     if backend_state == 'Running':
         notify('Tailnet connected')
     elif backend_state == 'Stopped':
-        notify('Tailnet disconnected', urgency='critical')
+        notify('Tailnet disconnected',
+               urgency='normal' if requested else 'critical')
     elif backend_state in ('NeedsLogin', 'NeedsMachineAuth'):
         notify('Tailscale logged out', 'Click the module to authenticate',
                urgency='critical')
@@ -222,6 +271,8 @@ def refresh_bar():
 
 
 def run_action(args, timeout=30):
+    if args[0] in ('up', 'down'):
+        mark_expected()
     completed_process = tailscale(args, timeout=timeout)
     if completed_process is None:
         notify('Tailscale did not respond', 'tailscale %s timed out'
@@ -276,4 +327,5 @@ def main():
         sys.stderr.write('usage: tailscale.py [toggle|up|down|dns on|dns off]\n')
         sys.exit(1)
 
-main()
+if __name__ == '__main__':
+    main()

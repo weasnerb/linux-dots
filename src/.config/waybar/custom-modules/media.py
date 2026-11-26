@@ -7,6 +7,8 @@ one app are open) is written to PLAYER_FILE so the module's click actions
 control the player it is showing (`playerctl -p "$(cat ...)"` in the waybar
 config) rather than whatever playerctl would pick on its own. When a player closes,
 the module falls back to another running player instead of going blank.
+A player with no artist/title (e.g. a browser tab that registers MPRIS without
+track info) never takes over the display from one that has it.
 """
 import os
 import signal
@@ -21,6 +23,7 @@ PLAYER_FILE = os.path.join(
 
 manager = Playerctl.PlayerManager()
 loop = GLib.MainLoop()
+current = None  # instance name of the player being shown
 
 
 def write(line):
@@ -35,6 +38,8 @@ def write(line):
 
 def set_current(name):
     """Record which player the module is showing, for the click actions."""
+    global current
+    current = name
     try:
         if name:
             with open(PLAYER_FILE, 'w') as f:
@@ -45,34 +50,43 @@ def set_current(name):
         pass
 
 
-def show(player):
+def track_info(player):
+    """Text to show for `player`, or None if it has no track info."""
     metadata = player.props.metadata
     if player.props.player_name == 'spotify' and \
             'mpris:trackid' in metadata.keys() and \
             ':ad:' in metadata['mpris:trackid']:
-        track_info = 'AD PLAYING'
-    elif player.get_artist() and player.get_title():
-        track_info = '{artist} - {title}'.format(artist=player.get_artist(),
-                                                 title=player.get_title())
-    else:
-        set_current(player.props.player_instance)
-        write('')
-        return
+        return 'AD PLAYING'
+    if player.get_artist() and player.get_title():
+        return '{artist} - {title}'.format(artist=player.get_artist(),
+                                           title=player.get_title())
+    return None
 
+
+def show(player):
+    """Show `player` if it has track info; otherwise leave the display alone,
+    unless it was the player being shown, in which case fall back."""
+    info = track_info(player)
+    if info is None:
+        if player.props.player_instance == current:
+            show_fallback(exclude=player)
+        return
     set_current(player.props.player_instance)
     icon = '󰏦' if player.props.status == 'Playing' else '󰐍'
-    write(f'{icon} {track_info}')
+    write(f'{icon} {info}')
 
 
-def show_fallback():
-    """Show a remaining player (preferring one that is playing), or nothing."""
-    players = manager.props.players
-    if not players:
+def show_fallback(exclude=None):
+    """Show another player with track info (preferring one that is playing),
+    or nothing if there is none."""
+    candidates = [p for p in manager.props.players
+                  if p is not exclude and track_info(p) is not None]
+    if not candidates:
         set_current(None)
         write('')
         return
-    playing = [p for p in players if p.props.status == 'Playing']
-    show((playing or players)[0])
+    playing = [p for p in candidates if p.props.status == 'Playing']
+    show((playing or candidates)[0])
 
 
 def on_play(player, _status, _manager):
@@ -87,8 +101,9 @@ def on_name_appeared(_manager, name):
     init_player(name)
 
 
-def on_player_vanished(_manager, _player):
-    show_fallback()
+def on_player_vanished(_manager, player):
+    if player.props.player_instance == current:
+        show_fallback(exclude=player)
 
 
 def init_player(name):
