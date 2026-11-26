@@ -61,7 +61,7 @@ local left, right, up, down = "h", "l", "k", "j"
 -- `launch-prefix = uwsm app --` in fuzzel.ini, so it is launched plain.
 local terminal = "uwsm app -- alacritty"
 local menu = "fuzzel"
-local lockscreen = "swaylock --screenshots --indicator --clock --effect-blur 5x2 --fade-in 0.25"
+local lockscreen = "uwsm app -- swaylock --screenshots --indicator --clock --effect-blur 5x2 --fade-in 0.25"
 
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/ for more
 hl.env("XCURSOR_SIZE", "24")

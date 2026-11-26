@@ -1,4 +1,5 @@
-@import url("/home/brian/.cache/wal/colors-custom-gtk3.css");
+/* Relative to ~/.config/waybar, i.e. ~/.cache/wal (GTK CSS has no ~ or $HOME). */
+@import url("../../.cache/wal/colors-custom-gtk3.css");
 
 * {
     border: none;

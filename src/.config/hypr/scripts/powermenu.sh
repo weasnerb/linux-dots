@@ -28,7 +28,7 @@ choice=$(printf '%s\n' "$entries" |
 
 case "$choice" in
 *Lock)
-    exec swaylock --screenshots --indicator --clock --effect-blur 5x2 --fade-in 0.25
+    exec uwsm app -- swaylock --screenshots --indicator --clock --effect-blur 5x2 --fade-in 0.25
     ;;
 *Logout)
     # Under uwsm the session is a systemd unit, so stop it properly; fall back

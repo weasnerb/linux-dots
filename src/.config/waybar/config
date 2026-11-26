@@ -97,7 +97,7 @@
         // immediately and the primary copy switches the profile in-process (no
         // Python start-up per click). Pattern must match PROCESS_PATTERN.
         "on-click": "pkill -USR1 -f '^python3 [^ ]*/custom-modules/performance\\.py$'",
-        "on-click-right": "alacritty -e htop"
+        "on-click-right": "uwsm app -- alacritty -e htop"
     },
     "battery": {
         "bat": "BAT0",
@@ -130,7 +130,7 @@
         "format-disconnected": "Disconnected 󰤮",
         // Replaces nm-applet's tray dropdown: NetworkManager's terminal UI for
         // picking Wi-Fi networks and editing connections.
-        "on-click": "alacritty -e nmtui",
+        "on-click": "uwsm app -- alacritty -e nmtui",
         "format-icons": [
             "󰤟",
             "󰤢",
@@ -156,7 +156,7 @@
                 "󰕾"
             ]
         },
-        "on-click": "alacritty -e pulsemixer"
+        "on-click": "uwsm app -- alacritty -e pulsemixer"
     },
     "pulseaudio#mic": {
         "format": "{format_source}",
@@ -199,15 +199,15 @@
         "on-click": "$HOME/.config/waybar/custom-modules/tailscale.py toggle",
         "on-click-middle": "tailscale ip -4 | tr -d '\\n' | wl-copy",
         "menu": "on-click-right",
-        "menu-file": "/home/brian/.config/waybar/custom-modules/tailscale-menu.xml",
+        "menu-file": "$HOME/.config/waybar/custom-modules/tailscale-menu.xml",
         "menu-actions": {
-            "connect": "/home/brian/.config/waybar/custom-modules/tailscale.py up",
-            "disconnect": "/home/brian/.config/waybar/custom-modules/tailscale.py down",
-            "dns-on": "/home/brian/.config/waybar/custom-modules/tailscale.py dns on",
-            "dns-off": "/home/brian/.config/waybar/custom-modules/tailscale.py dns off",
+            "connect": "$HOME/.config/waybar/custom-modules/tailscale.py up",
+            "disconnect": "$HOME/.config/waybar/custom-modules/tailscale.py down",
+            "dns-on": "$HOME/.config/waybar/custom-modules/tailscale.py dns on",
+            "dns-off": "$HOME/.config/waybar/custom-modules/tailscale.py dns off",
             "copy-ip": "tailscale ip -4 | tr -d '\\n' | wl-copy",
             "admin": "xdg-open https://login.tailscale.com/admin/machines",
-            "status": "alacritty -e tailscale status"
+            "status": "uwsm app -- alacritty -e tailscale status"
         }
     }
 }
