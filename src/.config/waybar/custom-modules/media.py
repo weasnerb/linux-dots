@@ -74,16 +74,18 @@ def find_player(instance):
     return None
 
 
-def show(player):
+def show(player, replacing=False):
     """Show `player` if it has track info; otherwise leave the display alone,
-    unless it was the player being shown, in which case fall back."""
+    unless it was the player being shown, in which case fall back.
+    `replacing` is set by show_fallback: the current player is going away, so
+    the paused-player guard below must not keep it on display."""
     instance = player.props.player_instance
     info = track_info(player)
     if info is None:
         if instance == current:
             show_fallback(exclude=player)
         return
-    if instance != current and player.props.status != 'Playing':
+    if not replacing and instance != current and player.props.status != 'Playing':
         shown = find_player(current) if current else None
         if shown is not None and shown.props.status == 'Playing':
             return  # don't let a paused/stopped player steal the display
@@ -102,7 +104,7 @@ def show_fallback(exclude=None):
         write('')
         return
     playing = [p for p in candidates if p.props.status == 'Playing']
-    show((playing or candidates)[0])
+    show((playing or candidates)[0], replacing=True)
 
 
 def on_play(player, _status, _manager):
