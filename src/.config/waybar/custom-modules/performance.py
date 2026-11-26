@@ -249,8 +249,11 @@ class Monitor:
     def sample(self):
         cur = cpu_times()
         cpu = usage(self.prev['cpu'], cur['cpu'])
+        # Only cores present in both samples: /proc/stat lists online CPUs
+        # only, so a core going on/offline would otherwise raise KeyError.
         cores = [usage(self.prev[n], cur[n]) for n in sorted(
-            (n for n in cur if n != 'cpu'), key=lambda n: int(n[3:]))]
+            (n for n in cur if n != 'cpu' and n in self.prev),
+            key=lambda n: int(n[3:]))]
         self.prev = cur
         self.stats = (cpu, cores, *memory())
 
@@ -277,10 +280,16 @@ class Monitor:
             os._exit(0)
 
     def tick(self):
-        self.try_become_primary()
-        self.sample()
-        self.check_battery()
-        self.emit()
+        # If a GLib timeout callback raises, PyGObject logs it and treats it as
+        # returning False, which cancels the timer for good: the module would
+        # freeze and battery warnings would stop. Keep the timer alive.
+        try:
+            self.try_become_primary()
+            self.sample()
+            self.check_battery()
+            self.emit()
+        except Exception as error:  # noqa: BLE001
+            print(f'performance.py: tick failed: {error!r}', file=sys.stderr)
         return GLib.SOURCE_CONTINUE
 
     def on_profile_change(self, _proxy, changed, _invalidated):
