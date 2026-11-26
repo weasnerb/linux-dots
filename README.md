@@ -51,7 +51,7 @@ This removes the symlinks the installer made and restores any `.bak` backups.
 |---|---|
 | `hypr/hyprland.lua` | Shared Hyprland config (Lua `hl.*` API): binds, appearance, animations |
 | `hypr/brian-arch/`, `hypr/brian-desktop-arch/` | Per-machine settings, loaded through the `current-computer` symlink |
-| `hypr/scripts/` | `volume.sh` (volume keys + popup), `powermenu.sh` (Super+Shift+P), `keyboard_backlight.py`, `makemywall.sh` (pad an image out to a wallpaper) |
+| `hypr/scripts/` | `volume.sh` (volume keys + popup), `powermenu.sh` (Super+Shift+P), `makemywall.sh` (pad an image out to a wallpaper) |
 | `waybar/` | Bar config, styles and custom modules (see below) |
 | `fuzzel/` | App launcher (Super+D) and power menu |
 | `systemd/user/`, `uwsm/env` | Session services and environment for uwsm |
