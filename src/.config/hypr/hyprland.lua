@@ -3,7 +3,7 @@
 
 --
 -- Dependencies:
--- - Menu: wofi
+-- - Menu: fuzzel
 -- - Terminal: Alacritty
 -- - Bar: Waybar
 -- - Lock: swaylock
@@ -26,8 +26,11 @@ local alt = "ALT"
 -- Vim Movement Keys
 local left, right, up, down = "h", "l", "k", "j"
 
-local terminal = "alacritty"
-local menu = "wofi --show drun"
+-- Launched via `uwsm app` so each app lands in its own systemd scope instead of
+-- running as a child of the compositor. fuzzel does this itself via
+-- `launch-prefix = uwsm app --` in fuzzel.ini, so it is launched plain.
+local terminal = "uwsm app -- alacritty"
+local menu = "fuzzel"
 local lockscreen = "swaylock --screenshots --indicator --clock --effect-blur 5x2 --fade-in 0.25"
 
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/ for more
@@ -136,6 +139,9 @@ hl.bind(alt .. " + L", hl.dsp.exec_cmd(lockscreen))
 hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.kill())
 hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exit())
 
+-- Power menu (fuzzel dmenu mode) -- replaces the old rofi-power-menu modi.
+hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/powermenu.sh"))
+
 hl.bind(mainMod .. " + F", hl.dsp.window.float({ action = "toggle" }))
 
 --
@@ -174,10 +180,19 @@ hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 --
 -- Audio
 --
--- Just Alsa Mixer
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("amixer -q set Master 2%+ unmute"))
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("amixer -q set Master 2%- unmute"))
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd("amixer -q set Master toggle"))
+-- WirePlumber / PipeWire native.
+-- These used to be `amixer -q set Master ...`, but amixer talks to ALSA through
+-- PipeWire's compat layer and adjusts a different control than the PipeWire
+-- sink volume, so it could drift out of sync with what waybar reports.
+-- volume.sh wraps wpctl (still capped at 100% with `-l 1.0` so it can't push
+-- into amplified distortion) and shows a single self-replacing dunst popup
+-- with a progress bar that hides ~1.5s after the last key press.
+-- `repeating` makes holding up/down keep stepping; mute is left single-shot so
+-- holding it doesn't flicker between muted and unmuted. `locked` keeps all
+-- three working while the screen is locked.
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh up"), { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh down"), { locked = true, repeating = true })
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh mute"), { locked = true })
 
 -- Pulse Audio
 -- hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("pulseaudio-ctl up"))
@@ -190,12 +205,12 @@ hl.bind("XF86AudioMute", hl.dsp.exec_cmd("amixer -q set Master toggle"))
 -- hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("pactl set-sink-volume @DEFAULT_SINK@ +5%"))
 
 -- Microphone
-hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("pactl set-source-mute @DEFAULT_SOURCE@ toggle"))
+hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { locked = true })
 -- Logitech mouse macro to trigger mic mute on windows should also mute default mic
 -- NOTE: the old hyprland.conf referenced "$alt_Control_Shift", which was never a defined
 -- variable, so this bind was already non-functional before this migration. Reconstructed
 -- as the modifiers the variable name implies (ALT+CTRL+SHIFT). Remap if that's not right.
-hl.bind("ALT + CTRL + SHIFT + m", hl.dsp.exec_cmd("pactl set-source-mute @DEFAULT_SOURCE@ toggle"))
+hl.bind("ALT + CTRL + SHIFT + m", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"))
 
 -- Players
 -- play-pause on both media buttons, as this laptop doesnt have them
@@ -213,15 +228,23 @@ require("current-computer.config")
 
 -- Execute At Launch
 --
--- - Import GTK Theme Settings
--- - Policy Kit
--- - Wallpaper
--- - Thunar Daemon
--- - Waybar
-hl.on("hyprland.start", function()
-    hl.exec_cmd("$HOME/.config/sway/custom-scripts/import-gsettings.sh")
-    hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
-    hl.exec_cmd("thunar --daemon")
-    hl.exec_cmd("hyprpaper")
-    hl.exec_cmd("waybar")
-end)
+-- Under uwsm these all run as systemd user units instead, wanted by
+-- graphical-session.target:
+--   import-gsettings.service                     (ours, ~/.config/systemd/user)
+--   polkit-gnome-authentication-agent-1.service  (ours, ~/.config/systemd/user)
+--   hyprpaper.service                            (shipped by hyprpaper)
+--   waybar.service                               (shipped, + our uwsm drop-in)
+-- Thunar is not started at all any more: thunar.service is D-Bus activated
+-- (Type=dbus, BusName=org.xfce.FileManager), so it starts on first use.
+--
+-- INVOCATION_ID is set only when Hyprland itself runs as a systemd unit, i.e.
+-- under uwsm. The fallback below keeps the plain (non-uwsm) session in ly
+-- working as before, so it stays a usable rollback.
+if not os.getenv("INVOCATION_ID") then
+    hl.on("hyprland.start", function()
+        hl.exec_cmd("$HOME/.config/hypr/scripts/import-gsettings.sh")
+        hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
+        hl.exec_cmd("hyprpaper")
+        hl.exec_cmd("waybar")
+    end)
+end
