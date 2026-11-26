@@ -237,10 +237,23 @@ require("current-computer.config")
 -- Thunar is not started at all any more: thunar.service is D-Bus activated
 -- (Type=dbus, BusName=org.xfce.FileManager), so it starts on first use.
 --
--- INVOCATION_ID is set only when Hyprland itself runs as a systemd unit, i.e.
--- under uwsm. The fallback below keeps the plain (non-uwsm) session in ly
--- working as before, so it stays a usable rollback.
-if not os.getenv("INVOCATION_ID") then
+-- The fallback below keeps the plain (non-uwsm) session in ly working as
+-- before, so it stays a usable rollback. Under uwsm, Hyprland runs inside the
+-- wayland-wm@<desktop>.service unit, so check its cgroup for that.
+-- Don't use INVOCATION_ID for this: ly itself runs as ly@ttyN.service and
+-- passes its own INVOCATION_ID down to the sessions it starts, so the plain
+-- session would look like uwsm and come up with no bar, wallpaper or polkit.
+local function under_uwsm()
+    local f = io.open("/proc/self/cgroup", "r")
+    if not f then
+        return false
+    end
+    local cgroup = f:read("*a")
+    f:close()
+    return cgroup:find("/wayland%-wm@") ~= nil
+end
+
+if not under_uwsm() then
     hl.on("hyprland.start", function()
         hl.exec_cmd("$HOME/.config/hypr/scripts/import-gsettings.sh")
         hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
