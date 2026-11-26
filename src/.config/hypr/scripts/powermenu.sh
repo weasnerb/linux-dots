@@ -1,10 +1,6 @@
 #!/bin/sh
 # Power menu via fuzzel's dmenu mode -- replaces rofi-power-menu.
 #
-# --cache=/dev/null: fuzzel's launch-count cache is for applications; letting
-# dmenu entries into it would pollute the app ranking (fuzzel's man page
-# recommends a separate cache per dmenu "type", and we want none here).
-#
 # Hibernate is only offered where logind's CanHibernate says "yes" (swap big
 # enough for RAM plus resume= configured). The script is shared between
 # machines and not all of them are set up for it.
@@ -26,7 +22,7 @@ entries=$(printf '%s\n%s\t%s\n%s\t%s' "$entries" \
     "󰐥  Shutdown" "poweroff")
 
 choice=$(printf '%s\n' "$entries" |
-    fuzzel --dmenu --cache=/dev/null --prompt="Power  " \
+    fuzzel --dmenu --prompt="Power  " \
         --lines="$(printf '%s\n' "$entries" | wc -l)" \
         --with-nth=1 --accept-nth=1 --match-nth='{1} {2}')
 
