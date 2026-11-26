@@ -4,9 +4,25 @@
     border: none;
     border-radius: 0;
     color: @foreground;
-    font-family: Roboto, Helvetica, Arial, sans-serif;
+    /* Material Design Icons right after Roboto so every 󰀀-style glyph comes
+       from the real MDI font. Left to fallback they came from MesloLGS NF,
+       whose Nerd Font patcher scales each icon to fill its cell, so narrow
+       ones (e.g. the 1-wave low-volume speaker) render larger than the rest. */
+    font-family: Roboto, "Material Design Icons", Helvetica, Arial, sans-serif;
     font-size: .85rem;
     min-height: 0;
+}
+
+/* Tooltips (the clock calendar, network/pulseaudio hovers) are GTK-themed by
+   default, which ignores pywal entirely. Pull them onto the bar's palette. */
+tooltip {
+    background: @background;
+    border: .1rem solid @color0;
+}
+
+tooltip label {
+    color: @foreground;
+    padding: .25rem;
 }
 
 window#waybar {
@@ -26,8 +42,7 @@ window#waybar {
     text-shadow: inherit;
 }
 
-#workspaces button.focused,
-#mode
+#workspaces button.active
 {
     background: @color2Alpha;
     border-bottom: .1rem solid @foreground;
@@ -35,23 +50,34 @@ window#waybar {
 
 #clock,
 #battery,
-#cpu,
-#memory,
 #network,
 #bluetooth,
 #pulseaudio,
 #tray,
-#mode,
-#custom-spotify,
-#custom-nordvpn
+#custom-media,
+#custom-tailscale,
+#custom-performance
 {
     padding: .25rem .5rem;
     margin: 0 .25rem;
     border-bottom: .1rem solid @color0Alpha;
 }
 
-#custom-nordvpn {
+#custom-tailscale.connected,
+#custom-tailscale.exit-node {
     background-color: #26A65B;
+}
+
+/* Connected, but tailscaled is reporting health warnings. Deliberately amber
+   rather than red: the tailnet is still up, so it shouldn't read as an outage. */
+#custom-tailscale.warning {
+    background-color: #F39C12;
+}
+
+/* Matches #network.disconnected below, since the two sit side by side. */
+#custom-tailscale.disconnected,
+#custom-tailscale.logged-out {
+    background: red;
 }
 
 #battery.charging {
@@ -64,12 +90,19 @@ window#waybar {
     }
 }
 
-#battery.warning:not(.charging) {
+/* Only one state class is applied at a time (the lowest matching one), so
+   .critical has to blink on its own; it blinks twice as fast as .warning. */
+#battery.warning:not(.charging),
+#battery.critical:not(.charging) {
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
     animation-direction: alternate;
+}
+
+#battery.critical:not(.charging) {
+    animation-duration: 0.25s;
 }
 
 #network.disconnected {
@@ -84,3 +117,8 @@ window#waybar {
     background: red;
 }
 
+/* Power-profile icon goes red when CPU or RAM is at 80%+
+   (see custom-modules/performance.py). */
+#custom-performance.high {
+    color: red;
+}

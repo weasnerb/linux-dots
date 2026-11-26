@@ -2,30 +2,31 @@
     "layer": "top", // Waybar at top layer
     // Choose the order of the modules
     "modules-left": [
-        "sway/workspaces",
-        "sway/mode",
-        "hyprland/workspaces",
-        "custom/nordvpn",
-        "custom/spotify"
+        "ext/workspaces",
+        "custom/media"
     ],
     "modules-center": [
-        "sway/window",
         "hyprland/window"
     ],
     "modules-right": [
+        "custom/tailscale",
         "network",
         "pulseaudio",
         "pulseaudio#mic",
+        "custom/performance",
 	"battery",
-        "cpu",
-        "memory",
 	"tray",
         "clock#calendar",
         "clock"
     ],
     // Modules
-    "sway/workspaces": {
-        "disable-scroll": true,
+    // ext/workspaces, not hyprland/workspaces: under a Lua Hyprland config the
+    // socket1 `dispatch` payload is evaluated as Lua, so the legacy string form
+    // waybar sends ("dispatch workspace 2") is a Lua syntax error and clicking a
+    // workspace silently does nothing. ext/workspaces activates over the
+    // ext-workspace-v1 Wayland protocol instead, so it never touches hyprctl.
+    "ext/workspaces": {
+        "on-click": "activate",
         "all-outputs": true,
         "format": "{name}: {icon}",
         "format-icons": {
@@ -37,54 +38,73 @@
             "9": "󰍪",
             "10": "󰫔",
             "urgent": "󰗖",
-            "focused": "󰐾",
-            "default": "󰐽"
-        }
-    },
-    "sway/mode": {
-        "format": "<span style=\"italic\">{}</span>"
-    },
-    "sway/window": {
-        "max-length": 60
-    },
-    "hyprland/workspaces": {
-        "disable-scroll": true,
-        "all-outputs": true,
-        "format": "{name}: {icon}",
-        "format-icons": {
-            "1": "󰣇",
-            "2": "󰅴",
-            "3": "󱂛",
-            "4": "󰘦",
-            "5": "󰆼",
-            "9": "󰍪",
-            "10": "󰫔",
-            "urgent": "󰗖",
-            "focused": "󰐾",
+            "active": "󰐾",
             "default": "󰐽"
         }
     },
     "hyprland/window": {
         "max-length": 60
     },
+    // The calendar tooltip is what the empty tooltip was trying to be: the
+    // clock module only renders {calendar} if a calendar block exists. locale is
+    // set explicitly because {calendar} ignores the system locale when picking
+    // the start-of-week, per waybar-clock(5).
     "clock#calendar": {
+        "locale": "en_US.UTF-8",
         "format": "󰸗 {:%D}",
-        "format-alt": "󰸗 {:%A, %B %d, %Y}"
+        "format-alt": "󰸗 {:%A, %B %d, %Y}",
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        // Without a threshold every fractional touchpad scroll delta counts as a
+        // shift, so one flick jumps a dozen months. This accumulates them instead.
+        "smooth-scrolling-threshold": 4.0,
+        "calendar": {
+            "mode": "month",
+            // Only used by the year view (right-click), but it has to be set here:
+            // left unset, toggling to year at runtime renders a single column.
+            "mode-mon-col": 3,
+            "on-scroll": 1,
+            // Structural markup only, no colors: the tooltip inherits the pywal
+            // palette from style.css, so hardcoded hex here would fight the theme.
+            "format": {
+                "months": "<b>{}</b>",
+                "weekdays": "<b>{}</b>",
+                "today": "<b><u>{}</u></b>"
+            }
+        },
+        // on-click is left alone so format-alt still toggles the long date.
+        "actions": {
+            "on-click-right": "mode",
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down"
+        }
     },
+    // 12-hour time lives in the tooltip rather than a format-alt: hovering beats
+    // click-toggling for something you only want to read occasionally.
     "clock": {
         "format": "󰅐 {:%H:%M}",
-        "format-alt": "󰅐 {:%I:%M %p}"
+        "tooltip-format": "{:%I:%M %p}"
     },
-    "cpu": {
-        "format": "{usage:2}% 󰍛"
-    },
-    "memory": {
-        "format": "{}% 󰍜"
+    // Power profile + CPU/RAM in one icon (custom-modules/performance.py).
+    // The icon is the active tlp-pd profile and turns red when CPU or RAM is
+    // at 80%+; the tooltip has the profile, per-core CPU and RAM used.
+    // Left-click cycles power-saver -> balanced -> performance (TLP_AUTO_SWITCH=2
+    // keeps the pick until the charger is plugged/unplugged); right-click htop.
+    "custom/performance": {
+        "format": "{}",
+        "return-type": "json",
+        "exec": "$HOME/.config/waybar/custom-modules/performance.py 2> /dev/null",
+        // Signals the running script, which switches in-process (no Python
+        // start-up per click) and updates the icon immediately.
+        "on-click": "kill -USR1 $(cat $XDG_RUNTIME_DIR/waybar-performance.pid)",
+        "on-click-right": "alacritty -e htop"
     },
     "battery": {
         "bat": "BAT0",
+        // Keep in sync with BATTERY_WARNING / BATTERY_CRITICAL in
+        // custom-modules/performance.py (low-battery notifications).
         "states": {
-            "warning": 15
+            "warning": 15,
+            "critical": 5
         },
         "format": "{capacity}% {icon}",
         "format-charging": "{capacity}% {icon}󱐌",
@@ -107,6 +127,9 @@
         "format-ethernet": "{ipaddr}/{cidr} 󰈁",
         "tooltip-format-ethernet": "{ifname}: {ipaddr}/{cidr} 󰈁",
         "format-disconnected": "Disconnected 󰤮",
+        // Replaces nm-applet's tray dropdown: NetworkManager's terminal UI for
+        // picking Wi-Fi networks and editing connections.
+        "on-click": "alacritty -e nmtui",
         "format-icons": [
             "󰤟",
             "󰤢",
@@ -115,8 +138,10 @@
         ]
     },
     "pulseaudio": {
-        "format": "{volume}% {icon}",
-        "format-bluetooth": "{volume}% {icon}󰂰",
+        // Icon only; the percentage lives in the hover tooltip.
+        "format": "{icon}",
+        "format-bluetooth": "{icon}󰂰",
+        "tooltip-format": "Volume: {volume}%\n{desc}",
         "format-muted": "󰝟",
         "format-icons": {
             "headphones": "󰋋",
@@ -152,18 +177,33 @@
     	"icon-size": 16,
 	"spacing": 10
     },
-    "custom/spotify": {
-        "format": "󰓇 {}",
+    "custom/media": {
+        "format": "{}",
         "max-length": 40,
-        "exec": "$HOME/.config/waybar/custom-modules/spotify.py 2> /dev/null",
-        "exec-if": "pgrep spotify",
-        "on-click": "playerctl -p spotify play-pause"
+        "exec": "$HOME/.config/waybar/custom-modules/media.py 2> /dev/null",
+        "exec-if": "command -v playerctl",
+        "on-click": "playerctl play-pause",
+        "on-click-right": "playerctl next"
     },
-    "custom/nordvpn": {
-        "format": "󰷖 {}",
-        "max-length": 30,
-        "interval": 4,
-        "exec": "$HOME/.config/waybar/custom-modules/nordvpn.py 2> /dev/null",
-        "exec-if": "pgrep openvpn"
+    "custom/tailscale": {
+        "format": "{}",
+        "return-type": "json",
+        "interval": 10,
+        "signal": 8,
+        "exec": "$HOME/.config/waybar/custom-modules/tailscale.py 2> /dev/null",
+        "exec-if": "command -v tailscale",
+        "on-click": "$HOME/.config/waybar/custom-modules/tailscale.py toggle",
+        "on-click-middle": "tailscale ip -4 | tr -d '\\n' | wl-copy",
+        "menu": "on-click-right",
+        "menu-file": "/home/brian/.config/waybar/custom-modules/tailscale-menu.xml",
+        "menu-actions": {
+            "connect": "/home/brian/.config/waybar/custom-modules/tailscale.py up",
+            "disconnect": "/home/brian/.config/waybar/custom-modules/tailscale.py down",
+            "dns-on": "/home/brian/.config/waybar/custom-modules/tailscale.py dns on",
+            "dns-off": "/home/brian/.config/waybar/custom-modules/tailscale.py dns off",
+            "copy-ip": "tailscale ip -4 | tr -d '\\n' | wl-copy",
+            "admin": "xdg-open https://login.tailscale.com/admin/machines",
+            "status": "alacritty -e tailscale status"
+        }
     }
 }
