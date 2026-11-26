@@ -63,7 +63,7 @@ This removes the symlinks the installer made and restores any `.bak` backups.
 - **Performance** (`custom-modules/performance.py`): the icon shows the power profile and turns red when CPU or RAM is at 80% or more. Hover for per-core CPU and RAM use. Left-click cycles power-saver → balanced → performance; right-click opens htop. On battery it warns at 15% and 5% and switches to power saver; plugging in switches to performance.
 - **Media** (`custom-modules/media.py`): now playing for any MPRIS player. Click to play/pause, right-click for the next track.
 - **Tailscale** (`custom-modules/tailscale.py`): connection status. Click to toggle, right-click for a menu, middle-click to copy this machine's Tailscale IP.
-- Built-in modules: workspaces, window title, network (click opens `nmtui`), volume and mic (percentage on hover), battery, tray, date and clock.
+- Built-in modules: workspaces, window title, network (click opens `nmtui`), volume and mic (percentage on hover), battery, tray, and a combined date/time clock (click for the long form, hover for a calendar).
 
 ## Dependencies
 

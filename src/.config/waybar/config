@@ -16,7 +16,6 @@
         "custom/performance",
 	"battery",
 	"tray",
-        "clock#calendar",
         "clock"
     ],
     // Modules
@@ -49,10 +48,14 @@
     // clock module only renders {calendar} if a calendar block exists. locale is
     // set explicitly because {calendar} ignores the system locale when picking
     // the start-of-week, per waybar-clock(5).
-    "clock#calendar": {
+    // Date and time in one module. ISO by default; click toggles the long form.
+    // Waybar formats with C++ <chrono>, which has no `%-I`/`%l`, so the hour
+    // keeps its leading zero ("09:16 AM"): dropping it would mean a custom
+    // script module and losing this interactive calendar tooltip.
+    "clock": {
         "locale": "en_US.UTF-8",
-        "format": "󰸗 {:%D}",
-        "format-alt": "󰸗 {:%A, %B %d, %Y}",
+        "format": "󰅐 {:%F %H:%M}",
+        "format-alt": "󰅐 {:%I:%M %p on %A, %B %d, %Y}",
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         // Without a threshold every fractional touchpad scroll delta counts as a
         // shift, so one flick jumps a dozen months. This accumulates them instead.
@@ -71,18 +74,12 @@
                 "today": "<b><u>{}</u></b>"
             }
         },
-        // on-click is left alone so format-alt still toggles the long date.
+        // on-click is left alone so format-alt still toggles the long form.
         "actions": {
             "on-click-right": "mode",
             "on-scroll-up": "shift_up",
             "on-scroll-down": "shift_down"
         }
-    },
-    // 12-hour time lives in the tooltip rather than a format-alt: hovering beats
-    // click-toggling for something you only want to read occasionally.
-    "clock": {
-        "format": "󰅐 {:%H:%M}",
-        "tooltip-format": "{:%I:%M %p}"
     },
     // Power profile + CPU/RAM in one icon (custom-modules/performance.py).
     // The icon is the active tlp-pd profile and turns red when CPU or RAM is
