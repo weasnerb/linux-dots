@@ -85,6 +85,14 @@ def show(player, replacing=False):
         if instance == current:
             show_fallback(exclude=player)
         return
+    if instance == current and player.props.status != 'Playing':
+        # The shown player paused/stopped: if another is still playing, show
+        # that one instead, so clicks control what is actually playing.
+        others = [p for p in manager.props.players if p is not player
+                  and p.props.status == 'Playing' and track_info(p) is not None]
+        if others:
+            show(others[0], replacing=True)
+            return
     if not replacing and instance != current and player.props.status != 'Playing':
         shown = find_player(current) if current else None
         if shown is not None and shown.props.status == 'Playing':
