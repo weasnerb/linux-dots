@@ -6,6 +6,12 @@ from pathlib import Path
 USER_HOME_DIR=Path.home()
 SRC_DIR=Path.cwd().joinpath('src')
 
+# Directories whose files are linked one by one instead of linking the whole
+# directory. ~/.config/systemd/user also holds systemd's own enablement links
+# (*.wants/), so it must stay a real directory: replacing it with a symlink to
+# the repo would back it up out of the way and silently disable every user unit.
+PER_FILE_DIRS = {Path('.config/systemd')}
+
 def main():
     """
     Entrypoint in installer.py
@@ -131,6 +137,9 @@ def install_config(src_config_path, installed_config_path):
     Symbolically link the dot config from src_config_path to the installed_config_path
     """
     print(f"Installing {str(src_config_path.relative_to(SRC_DIR))}")
+    # Per-file configs (see PER_FILE_DIRS) can sit in directories that don't
+    # exist yet, e.g. ~/.config/systemd/user/waybar.service.d/.
+    installed_config_path.parent.mkdir(parents=True, exist_ok=True)
     installed_config_path.symlink_to(src_config_path)
 
 def is_config_installed(installed_config_path):
@@ -155,7 +164,9 @@ def get_dot_configs_in_path(dir_to_search):
 
     dirs = dir_to_search.iterdir()
     for dir in dirs:
-        if is_dot_file(dir):
+        if dir.relative_to(SRC_DIR) in PER_FILE_DIRS:
+            dot_configs_in_path.extend(sorted(p for p in dir.rglob('*') if p.is_file()))
+        elif is_dot_file(dir):
             dot_configs_in_path.append(dir)
         elif dir.is_dir():
             dot_configs_in_path.extend(get_dot_configs_in_path(dir))
