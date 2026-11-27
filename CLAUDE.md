@@ -19,8 +19,8 @@ Personal Linux dotfiles (Arch, Hyprland on Wayland, session managed by uwsm). Th
 
 Hyprland runs under uwsm, so autostart is systemd user units wanted by `graphical-session.target`, not `exec` calls in the Hyprland config:
 
-- `systemd/user/import-gsettings.service` and `polkit-gnome-authentication-agent-1.service` are ours.
-- `hyprpaper.service` and `waybar.service` ship with their packages; `systemd/user/waybar.service.d/uwsm.conf` is a drop-in for uwsm.
+- `systemd/user/import-gsettings.service` is ours.
+- `hyprpaper.service`, `hyprpolkitagent.service` and `waybar.service` ship with their packages; `systemd/user/waybar.service.d/uwsm.conf` is a drop-in for uwsm.
 - `uwsm/env` is the session environment. uwsm only sources POSIX sh profiles, so PATH additions from `.zprofile` are mirrored there.
 - **Restart waybar with `systemctl --user restart waybar`** (config-only changes: `systemctl --user reload waybar`). Killing and relaunching it by hand makes the service respawn a second bar and orphans the custom-module scripts.
 

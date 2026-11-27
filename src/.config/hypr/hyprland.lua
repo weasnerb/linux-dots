@@ -269,7 +269,7 @@ end
 -- Under uwsm these all run as systemd user units instead, wanted by
 -- graphical-session.target:
 --   import-gsettings.service                     (ours, ~/.config/systemd/user)
---   polkit-gnome-authentication-agent-1.service  (ours, ~/.config/systemd/user)
+--   hyprpolkitagent.service                      (shipped by hyprpolkitagent)
 --   hyprpaper.service                            (shipped by hyprpaper)
 --   waybar.service                               (shipped, + our uwsm drop-in)
 -- Thunar is not started at all any more: thunar.service is D-Bus activated
@@ -294,7 +294,7 @@ end
 if not under_uwsm() then
     hl.on("hyprland.start", function()
         hl.exec_cmd("$HOME/.config/hypr/scripts/import-gsettings.sh")
-        hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
+        hl.exec_cmd("/usr/lib/hyprpolkitagent/hyprpolkitagent")
         hl.exec_cmd("hyprpaper")
         hl.exec_cmd("waybar")
     end)
