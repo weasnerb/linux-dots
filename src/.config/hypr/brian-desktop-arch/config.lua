@@ -4,9 +4,9 @@ local mainMod = "SUPER"
 -- Display
 --
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/ for more
-local monitorLeft = "DP-2"
+local monitorLeft = "DP-3"
 local monitorCenter = "DP-1"
-local monitorRight = "DP-3"
+local monitorRight = "DP-2"
 
 hl.monitor({ output = monitorLeft, mode = "2560x1440@143.998", position = "0x0", scale = 1 })
 hl.monitor({ output = monitorCenter, mode = "2560x1440@143.998", position = "2560x0", scale = 1 })
