@@ -20,7 +20,7 @@ Personal Linux dotfiles (Arch, Hyprland on Wayland, session managed by uwsm). Th
 Hyprland runs under uwsm, so autostart is systemd user units wanted by `graphical-session.target`, not `exec` calls in the Hyprland config:
 
 - `systemd/user/import-gsettings.service` is ours.
-- `hyprpaper.service`, `hyprpolkitagent.service` and `waybar.service` ship with their packages; `systemd/user/waybar.service.d/uwsm.conf` is a drop-in for uwsm.
+- `hyprpaper.service`, `hyprpolkitagent.service`, `hypridle.service` and `waybar.service` ship with their packages; `systemd/user/waybar.service.d/uwsm.conf` is a drop-in for uwsm.
 - `uwsm/env` is the session environment. uwsm only sources POSIX sh profiles, so PATH additions from `.zprofile` are mirrored there.
 - **Restart waybar with `systemctl --user restart waybar`** (config-only changes: `systemctl --user reload waybar`). Killing and relaunching it by hand makes the service respawn a second bar and orphans the custom-module scripts.
 
@@ -35,6 +35,8 @@ The legacy hyprlang `.conf` files were removed; config is now Lua (`hl.*` API).
 - Bind options go in a third table argument, e.g. `{ locked = true, repeating = true }` (work on the lock screen / repeat while held). `/usr/share/hypr/hyprland.lua` is the upstream example config and `/usr/share/hypr/stubs/hl.meta.lua` documents the API.
 - Helper scripts live in `hypr/scripts/`: `volume.sh` (wpctl + dunst volume popup), `powermenu.sh` (fuzzel dmenu power menu), `import-gsettings.sh` (run by its systemd unit), `makemywall.sh` (wallpaper padding tool; likely the only surviving copy, don't delete).
 - Launcher is fuzzel (`fuzzel/fuzzel.ini`); it prefixes launches with `uwsm app --` itself.
+- Lock screen is hyprlock (`hypr/hyprlock.conf`, **hyprlang, not Lua**). It defines fallback colors, then `source`s `~/.cache/wal/colors-hyprlock.conf`; `$fail`/`$warn` stay fixed after the source because wal palettes rarely have a usable red. Alt+L and `powermenu.sh` both launch it as `pidof hyprlock || uwsm app -- hyprlock`; keep the two in sync.
+- `hypr/hypridle.conf` only turns the displays off after 60 min idle and back on at the first input. **It never locks, deliberately**: don't add a lock-on-idle or lock-before-sleep step. `hyprctl dispatch` takes Lua here, and DPMS needs the table form `hl.dsp.dpms({ action = "off" })`; a bare string is silently treated as a toggle.
 
 ## Waybar
 
@@ -49,5 +51,5 @@ The legacy hyprlang `.conf` files were removed; config is now Lua (`hl.*` API).
 ## Other configs
 
 - Neovim (`src/.config/nvim/`): entry `init.lua` requires `lua/main` (`set`, `remap`, `package-manager`), with per-plugin setup in `after/plugin/`. `lazy-lock.json` is gitignored.
-- wal templates in `src/.config/wal/templates/` generate colors for GTK3 (waybar imports it), fuzzel, hyprpaper and hypr.
+- wal templates in `src/.config/wal/templates/` generate colors for GTK3 (waybar imports it), fuzzel, hyprpaper, hypr and hyprlock.
 - `.zshrc` lazy-loads nvm via stub functions (sourcing it eagerly cost ~520 ms per shell).

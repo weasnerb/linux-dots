@@ -6,7 +6,7 @@
 -- - Menu: fuzzel
 -- - Terminal: Alacritty
 -- - Bar: Waybar
--- - Lock: swaylock
+-- - Lock: hyprlock (hyprlock.conf)
 -- - Wallpaper: hyprpaper
 --
 
@@ -61,7 +61,8 @@ local left, right, up, down = "h", "l", "k", "j"
 -- `launch-prefix = uwsm app --` in fuzzel.ini, so it is launched plain.
 local terminal = "uwsm app -- alacritty"
 local menu = "fuzzel"
-local lockscreen = "uwsm app -- swaylock --screenshots --indicator --clock --effect-blur 5x2 --fade-in 0.25"
+-- pidof guard: a second press would otherwise start a second hyprlock.
+local lockscreen = "pidof hyprlock || uwsm app -- hyprlock"
 
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/ for more
 hl.env("XCURSOR_SIZE", "24")
