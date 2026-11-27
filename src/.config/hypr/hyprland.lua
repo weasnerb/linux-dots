@@ -62,7 +62,9 @@ local left, right, up, down = "h", "l", "k", "j"
 local terminal = "uwsm app -- alacritty"
 local menu = "fuzzel"
 -- pidof guard: a second press would otherwise start a second hyprlock.
-local lockscreen = "pidof hyprlock || uwsm app -- hyprlock"
+-- notify-send: if hyprlock is missing or fails to lock, say so instead of
+-- silently leaving the screen unlocked. Keep in sync with powermenu.sh.
+local lockscreen = "pidof hyprlock || uwsm app -- hyprlock || notify-send -u critical 'Lock failed' 'Is hyprlock installed?'"
 
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/ for more
 hl.env("XCURSOR_SIZE", "24")
@@ -180,6 +182,10 @@ hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/p
 
 hl.bind(mainMod .. " + F", hl.dsp.window.float({ action = "toggle" }))
 
+-- Clipboard history picker (cliphist + fuzzel). History is recorded by
+-- cliphist.service, or by the non-uwsm fallback below.
+hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/clipboard.sh"))
+
 --
 -- Screenshots
 --
@@ -270,6 +276,7 @@ end
 -- Under uwsm these all run as systemd user units instead, wanted by
 -- graphical-session.target:
 --   import-gsettings.service                     (ours, ~/.config/systemd/user)
+--   cliphist.service                             (ours, ~/.config/systemd/user)
 --   hyprpolkitagent.service                      (shipped by hyprpolkitagent)
 --   hyprpaper.service                            (shipped by hyprpaper)
 --   waybar.service                               (shipped, + our uwsm drop-in)
@@ -298,5 +305,6 @@ if not under_uwsm() then
         hl.exec_cmd("/usr/lib/hyprpolkitagent/hyprpolkitagent")
         hl.exec_cmd("hyprpaper")
         hl.exec_cmd("waybar")
+        hl.exec_cmd("wl-paste --watch cliphist store")
     end)
 end

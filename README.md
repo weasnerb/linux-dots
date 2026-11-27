@@ -31,7 +31,7 @@ Then, on each machine:
    ```
 3. **Enable the session services:**
    ```bash
-   systemctl --user enable import-gsettings.service hyprpolkitagent.service hypridle.service waybar.service hyprpaper.service
+   systemctl --user enable import-gsettings.service cliphist.service hyprpolkitagent.service hypridle.service waybar.service hyprpaper.service
    ```
 4. **Laptops: make TLP always switch profiles with the charger.** Plugging in should go to performance and unplugging to balanced, with a profile picked from the bar holding until the next plug/unplug. That's TLP's "auto" mode; its default "smart" mode skips the switch after a manual pick. `/etc/tlp.conf` isn't in this repo, so set it by hand:
    ```bash
@@ -76,7 +76,7 @@ Arch package names. Packages marked *(AUR)* are not in the official repos.
 - **Session:** `hyprland`, `uwsm`, `ly`, `xorg-xwayland`, `hyprpaper`, `hyprpolkitagent`, `xdg-desktop-portal-hyprland`, `xdg-desktop-portal-gtk`
 - **Bar:** `waybar`, `python-gobject`, `playerctl`, `htop`, `networkmanager` (for `nmtui`), `tailscale` (optional)
 - **Power profiles:** `tlp` and `tlp-pd` (or anything else providing the power-profiles-daemon D-Bus API)
-- **Launcher, notifications, lock:** `fuzzel`, `dunst`, `libnotify`, `hyprlock`, `hypridle` (screen-off only)
+- **Launcher, notifications, lock:** `fuzzel`, `dunst`, `libnotify`, `hyprlock`, `hypridle` (screen-off only), `cliphist` + `wl-clipboard` (clipboard history)
 - **Audio:** `pipewire`, `pipewire-pulse` (PulseAudio compatibility for apps and pulsemixer), `wireplumber` (`wpctl`), `pulsemixer`
 - **Utilities:** `brightnessctl`, `grim`, `slurp` and `jq` (screenshots), `wl-clipboard`, `imagemagick` (`makemywall.sh`)
 - **Colors:** `python-pywal` *(AUR)*

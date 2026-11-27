@@ -1,0 +1,16 @@
+[Unit]
+Description=Clipboard history recorder (cliphist)
+Documentation=https://github.com/sentriz/cliphist
+PartOf=graphical-session.target
+After=graphical-session.target
+ConditionEnvironment=WAYLAND_DISPLAY
+
+[Service]
+# Stores every new clipboard entry (text and images); the picker is
+# hypr/scripts/clipboard.sh on Super+V.
+ExecStart=/usr/bin/wl-paste --watch /usr/bin/cliphist store
+Restart=on-failure
+Slice=background-graphical.slice
+
+[Install]
+WantedBy=graphical-session.target

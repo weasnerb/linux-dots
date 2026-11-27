@@ -28,7 +28,10 @@ choice=$(printf '%s\n' "$entries" |
 
 case "$choice" in
 *Lock)
-    pidof hyprlock >/dev/null || exec uwsm app -- hyprlock
+    # No exec, so the notify-send fallback can run if hyprlock is missing or
+    # fails to lock. Keep in sync with the Alt+L bind in hyprland.lua.
+    pidof hyprlock >/dev/null || uwsm app -- hyprlock ||
+        notify-send -u critical 'Lock failed' 'Is hyprlock installed?'
     ;;
 *Logout)
     # Under uwsm the session is a systemd unit, so stop it properly; fall back
